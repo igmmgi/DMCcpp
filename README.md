@@ -1,5 +1,4 @@
 # DMCfun 
-
 Cpp command line implementation of the diffusion process model (Diffusion Model
 for Conflict Tasks, DMC) presented in Automatic and controlled stimulus
 processing in conflict tasks: Superimposed diffusion processes and delta
@@ -13,7 +12,9 @@ procedures.
 git clone https://github.com/igmmgi/DMCcpp.git
 
 cd DMCcpp
+
 cmake build .
+
 make
 
 ## Basic Examples
