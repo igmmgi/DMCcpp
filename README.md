@@ -13,7 +13,7 @@ procedures.
 git clone https://github.com/igmmgi/DMCcpp.git
 
 cd DMCcpp
-
+cmake build .
 make
 
 ## Basic Examples
