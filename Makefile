@@ -39,19 +39,19 @@ cmake_force:
 SHELL = /bin/sh
 
 # The CMake executable.
-CMAKE_COMMAND = /snap/clion/39/bin/cmake/linux/bin/cmake
+CMAKE_COMMAND = /usr/bin/cmake
 
 # The command to remove a file.
-RM = /snap/clion/39/bin/cmake/linux/bin/cmake -E remove -f
+RM = /usr/bin/cmake -E remove -f
 
 # Escaping for special characters.
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/ian/Documents/Projects/DMC/simulationCode/DMCcpp
+CMAKE_SOURCE_DIR = /home/ian/Desktop/DMCcpp
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/ian/Documents/Projects/DMC/simulationCode/DMCcpp
+CMAKE_BINARY_DIR = /home/ian/Desktop/DMCcpp
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -59,7 +59,7 @@ CMAKE_BINARY_DIR = /home/ian/Documents/Projects/DMC/simulationCode/DMCcpp
 # Special rule for the target rebuild_cache
 rebuild_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
-	/snap/clion/39/bin/cmake/linux/bin/cmake -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+	/usr/bin/cmake -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
 .PHONY : rebuild_cache
 
 # Special rule for the target rebuild_cache
@@ -70,7 +70,7 @@ rebuild_cache/fast: rebuild_cache
 # Special rule for the target edit_cache
 edit_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
-	/snap/clion/39/bin/cmake/linux/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
+	/usr/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
 .PHONY : edit_cache
 
 # Special rule for the target edit_cache
@@ -80,9 +80,9 @@ edit_cache/fast: edit_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/ian/Documents/Projects/DMC/simulationCode/DMCcpp/CMakeFiles /home/ian/Documents/Projects/DMC/simulationCode/DMCcpp/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/ian/Desktop/DMCcpp/CMakeFiles /home/ian/Desktop/DMCcpp/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/ian/Documents/Projects/DMC/simulationCode/DMCcpp/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/ian/Desktop/DMCcpp/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -111,17 +111,17 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named DMCcpp
+# Target rules for targets named dmcSim
 
 # Build rule for target.
-DMCcpp: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 DMCcpp
-.PHONY : DMCcpp
+dmcSim: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 dmcSim
+.PHONY : dmcSim
 
 # fast build rule for target.
-DMCcpp/fast:
-	$(MAKE) -f CMakeFiles/DMCcpp.dir/build.make CMakeFiles/DMCcpp.dir/build
-.PHONY : DMCcpp/fast
+dmcSim/fast:
+	$(MAKE) -f CMakeFiles/dmcSim.dir/build.make CMakeFiles/dmcSim.dir/build
+.PHONY : dmcSim/fast
 
 inDMC.o: inDMC.cpp.o
 
@@ -129,7 +129,7 @@ inDMC.o: inDMC.cpp.o
 
 # target to build an object file
 inDMC.cpp.o:
-	$(MAKE) -f CMakeFiles/DMCcpp.dir/build.make CMakeFiles/DMCcpp.dir/inDMC.cpp.o
+	$(MAKE) -f CMakeFiles/dmcSim.dir/build.make CMakeFiles/dmcSim.dir/inDMC.cpp.o
 .PHONY : inDMC.cpp.o
 
 inDMC.i: inDMC.cpp.i
@@ -138,7 +138,7 @@ inDMC.i: inDMC.cpp.i
 
 # target to preprocess a source file
 inDMC.cpp.i:
-	$(MAKE) -f CMakeFiles/DMCcpp.dir/build.make CMakeFiles/DMCcpp.dir/inDMC.cpp.i
+	$(MAKE) -f CMakeFiles/dmcSim.dir/build.make CMakeFiles/dmcSim.dir/inDMC.cpp.i
 .PHONY : inDMC.cpp.i
 
 inDMC.s: inDMC.cpp.s
@@ -147,7 +147,7 @@ inDMC.s: inDMC.cpp.s
 
 # target to generate assembly for a file
 inDMC.cpp.s:
-	$(MAKE) -f CMakeFiles/DMCcpp.dir/build.make CMakeFiles/DMCcpp.dir/inDMC.cpp.s
+	$(MAKE) -f CMakeFiles/dmcSim.dir/build.make CMakeFiles/dmcSim.dir/inDMC.cpp.s
 .PHONY : inDMC.cpp.s
 
 main.o: main.cpp.o
@@ -156,7 +156,7 @@ main.o: main.cpp.o
 
 # target to build an object file
 main.cpp.o:
-	$(MAKE) -f CMakeFiles/DMCcpp.dir/build.make CMakeFiles/DMCcpp.dir/main.cpp.o
+	$(MAKE) -f CMakeFiles/dmcSim.dir/build.make CMakeFiles/dmcSim.dir/main.cpp.o
 .PHONY : main.cpp.o
 
 main.i: main.cpp.i
@@ -165,7 +165,7 @@ main.i: main.cpp.i
 
 # target to preprocess a source file
 main.cpp.i:
-	$(MAKE) -f CMakeFiles/DMCcpp.dir/build.make CMakeFiles/DMCcpp.dir/main.cpp.i
+	$(MAKE) -f CMakeFiles/dmcSim.dir/build.make CMakeFiles/dmcSim.dir/main.cpp.i
 .PHONY : main.cpp.i
 
 main.s: main.cpp.s
@@ -174,7 +174,7 @@ main.s: main.cpp.s
 
 # target to generate assembly for a file
 main.cpp.s:
-	$(MAKE) -f CMakeFiles/DMCcpp.dir/build.make CMakeFiles/DMCcpp.dir/main.cpp.s
+	$(MAKE) -f CMakeFiles/dmcSim.dir/build.make CMakeFiles/dmcSim.dir/main.cpp.s
 .PHONY : main.cpp.s
 
 outDMC.o: outDMC.cpp.o
@@ -183,7 +183,7 @@ outDMC.o: outDMC.cpp.o
 
 # target to build an object file
 outDMC.cpp.o:
-	$(MAKE) -f CMakeFiles/DMCcpp.dir/build.make CMakeFiles/DMCcpp.dir/outDMC.cpp.o
+	$(MAKE) -f CMakeFiles/dmcSim.dir/build.make CMakeFiles/dmcSim.dir/outDMC.cpp.o
 .PHONY : outDMC.cpp.o
 
 outDMC.i: outDMC.cpp.i
@@ -192,7 +192,7 @@ outDMC.i: outDMC.cpp.i
 
 # target to preprocess a source file
 outDMC.cpp.i:
-	$(MAKE) -f CMakeFiles/DMCcpp.dir/build.make CMakeFiles/DMCcpp.dir/outDMC.cpp.i
+	$(MAKE) -f CMakeFiles/dmcSim.dir/build.make CMakeFiles/dmcSim.dir/outDMC.cpp.i
 .PHONY : outDMC.cpp.i
 
 outDMC.s: outDMC.cpp.s
@@ -201,7 +201,7 @@ outDMC.s: outDMC.cpp.s
 
 # target to generate assembly for a file
 outDMC.cpp.s:
-	$(MAKE) -f CMakeFiles/DMCcpp.dir/build.make CMakeFiles/DMCcpp.dir/outDMC.cpp.s
+	$(MAKE) -f CMakeFiles/dmcSim.dir/build.make CMakeFiles/dmcSim.dir/outDMC.cpp.s
 .PHONY : outDMC.cpp.s
 
 runDMC.o: runDMC.cpp.o
@@ -210,7 +210,7 @@ runDMC.o: runDMC.cpp.o
 
 # target to build an object file
 runDMC.cpp.o:
-	$(MAKE) -f CMakeFiles/DMCcpp.dir/build.make CMakeFiles/DMCcpp.dir/runDMC.cpp.o
+	$(MAKE) -f CMakeFiles/dmcSim.dir/build.make CMakeFiles/dmcSim.dir/runDMC.cpp.o
 .PHONY : runDMC.cpp.o
 
 runDMC.i: runDMC.cpp.i
@@ -219,7 +219,7 @@ runDMC.i: runDMC.cpp.i
 
 # target to preprocess a source file
 runDMC.cpp.i:
-	$(MAKE) -f CMakeFiles/DMCcpp.dir/build.make CMakeFiles/DMCcpp.dir/runDMC.cpp.i
+	$(MAKE) -f CMakeFiles/dmcSim.dir/build.make CMakeFiles/dmcSim.dir/runDMC.cpp.i
 .PHONY : runDMC.cpp.i
 
 runDMC.s: runDMC.cpp.s
@@ -228,7 +228,7 @@ runDMC.s: runDMC.cpp.s
 
 # target to generate assembly for a file
 runDMC.cpp.s:
-	$(MAKE) -f CMakeFiles/DMCcpp.dir/build.make CMakeFiles/DMCcpp.dir/runDMC.cpp.s
+	$(MAKE) -f CMakeFiles/dmcSim.dir/build.make CMakeFiles/dmcSim.dir/runDMC.cpp.s
 .PHONY : runDMC.cpp.s
 
 # Help Target
@@ -238,8 +238,8 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... rebuild_cache"
+	@echo "... dmcSim"
 	@echo "... edit_cache"
-	@echo "... DMCcpp"
 	@echo "... inDMC.o"
 	@echo "... inDMC.i"
 	@echo "... inDMC.s"
