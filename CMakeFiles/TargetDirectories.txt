@@ -1,3 +1,0 @@
-/home/ian/Documents/Projects/DMC/simulationCode/DMCcpp/CMakeFiles/rebuild_cache.dir
-/home/ian/Documents/Projects/DMC/simulationCode/DMCcpp/CMakeFiles/dmcSim.dir
-/home/ian/Documents/Projects/DMC/simulationCode/DMCcpp/CMakeFiles/edit_cache.dir
