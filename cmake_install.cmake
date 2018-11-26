@@ -1,4 +1,4 @@
-# Install script for directory: /home/ian/Desktop/DMCcpp
+# Install script for directory: /home/ian/Documents/Projects/DMC/simulationCode/DMCcpp
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -45,5 +45,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/ian/Desktop/DMCcpp/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/ian/Documents/Projects/DMC/simulationCode/DMCcpp/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

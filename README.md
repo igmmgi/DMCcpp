@@ -13,7 +13,7 @@ git clone https://github.com/igmmgi/DMCcpp.git
 
 cd DMCcpp
 
-cmake build .
+cmake .
 
 make
 

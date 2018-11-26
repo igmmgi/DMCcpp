@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/ian/Desktop/DMCcpp
+CMAKE_SOURCE_DIR = /home/ian/Documents/Projects/DMC/simulationCode/DMCcpp
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/ian/Desktop/DMCcpp
+CMAKE_BINARY_DIR = /home/ian/Documents/Projects/DMC/simulationCode/DMCcpp
 
 # Include any dependencies generated for this target.
 include CMakeFiles/dmcSim.dir/depend.make
@@ -59,55 +59,55 @@ include CMakeFiles/dmcSim.dir/flags.make
 
 CMakeFiles/dmcSim.dir/inDMC.cpp.o: CMakeFiles/dmcSim.dir/flags.make
 CMakeFiles/dmcSim.dir/inDMC.cpp.o: inDMC.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ian/Desktop/DMCcpp/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/dmcSim.dir/inDMC.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/dmcSim.dir/inDMC.cpp.o -c /home/ian/Desktop/DMCcpp/inDMC.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ian/Documents/Projects/DMC/simulationCode/DMCcpp/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/dmcSim.dir/inDMC.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/dmcSim.dir/inDMC.cpp.o -c /home/ian/Documents/Projects/DMC/simulationCode/DMCcpp/inDMC.cpp
 
 CMakeFiles/dmcSim.dir/inDMC.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/dmcSim.dir/inDMC.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/ian/Desktop/DMCcpp/inDMC.cpp > CMakeFiles/dmcSim.dir/inDMC.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/ian/Documents/Projects/DMC/simulationCode/DMCcpp/inDMC.cpp > CMakeFiles/dmcSim.dir/inDMC.cpp.i
 
 CMakeFiles/dmcSim.dir/inDMC.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/dmcSim.dir/inDMC.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/ian/Desktop/DMCcpp/inDMC.cpp -o CMakeFiles/dmcSim.dir/inDMC.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/ian/Documents/Projects/DMC/simulationCode/DMCcpp/inDMC.cpp -o CMakeFiles/dmcSim.dir/inDMC.cpp.s
 
 CMakeFiles/dmcSim.dir/main.cpp.o: CMakeFiles/dmcSim.dir/flags.make
 CMakeFiles/dmcSim.dir/main.cpp.o: main.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ian/Desktop/DMCcpp/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/dmcSim.dir/main.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/dmcSim.dir/main.cpp.o -c /home/ian/Desktop/DMCcpp/main.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ian/Documents/Projects/DMC/simulationCode/DMCcpp/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/dmcSim.dir/main.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/dmcSim.dir/main.cpp.o -c /home/ian/Documents/Projects/DMC/simulationCode/DMCcpp/main.cpp
 
 CMakeFiles/dmcSim.dir/main.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/dmcSim.dir/main.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/ian/Desktop/DMCcpp/main.cpp > CMakeFiles/dmcSim.dir/main.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/ian/Documents/Projects/DMC/simulationCode/DMCcpp/main.cpp > CMakeFiles/dmcSim.dir/main.cpp.i
 
 CMakeFiles/dmcSim.dir/main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/dmcSim.dir/main.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/ian/Desktop/DMCcpp/main.cpp -o CMakeFiles/dmcSim.dir/main.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/ian/Documents/Projects/DMC/simulationCode/DMCcpp/main.cpp -o CMakeFiles/dmcSim.dir/main.cpp.s
 
 CMakeFiles/dmcSim.dir/outDMC.cpp.o: CMakeFiles/dmcSim.dir/flags.make
 CMakeFiles/dmcSim.dir/outDMC.cpp.o: outDMC.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ian/Desktop/DMCcpp/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/dmcSim.dir/outDMC.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/dmcSim.dir/outDMC.cpp.o -c /home/ian/Desktop/DMCcpp/outDMC.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ian/Documents/Projects/DMC/simulationCode/DMCcpp/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/dmcSim.dir/outDMC.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/dmcSim.dir/outDMC.cpp.o -c /home/ian/Documents/Projects/DMC/simulationCode/DMCcpp/outDMC.cpp
 
 CMakeFiles/dmcSim.dir/outDMC.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/dmcSim.dir/outDMC.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/ian/Desktop/DMCcpp/outDMC.cpp > CMakeFiles/dmcSim.dir/outDMC.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/ian/Documents/Projects/DMC/simulationCode/DMCcpp/outDMC.cpp > CMakeFiles/dmcSim.dir/outDMC.cpp.i
 
 CMakeFiles/dmcSim.dir/outDMC.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/dmcSim.dir/outDMC.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/ian/Desktop/DMCcpp/outDMC.cpp -o CMakeFiles/dmcSim.dir/outDMC.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/ian/Documents/Projects/DMC/simulationCode/DMCcpp/outDMC.cpp -o CMakeFiles/dmcSim.dir/outDMC.cpp.s
 
 CMakeFiles/dmcSim.dir/runDMC.cpp.o: CMakeFiles/dmcSim.dir/flags.make
 CMakeFiles/dmcSim.dir/runDMC.cpp.o: runDMC.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ian/Desktop/DMCcpp/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/dmcSim.dir/runDMC.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/dmcSim.dir/runDMC.cpp.o -c /home/ian/Desktop/DMCcpp/runDMC.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ian/Documents/Projects/DMC/simulationCode/DMCcpp/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/dmcSim.dir/runDMC.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/dmcSim.dir/runDMC.cpp.o -c /home/ian/Documents/Projects/DMC/simulationCode/DMCcpp/runDMC.cpp
 
 CMakeFiles/dmcSim.dir/runDMC.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/dmcSim.dir/runDMC.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/ian/Desktop/DMCcpp/runDMC.cpp > CMakeFiles/dmcSim.dir/runDMC.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/ian/Documents/Projects/DMC/simulationCode/DMCcpp/runDMC.cpp > CMakeFiles/dmcSim.dir/runDMC.cpp.i
 
 CMakeFiles/dmcSim.dir/runDMC.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/dmcSim.dir/runDMC.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/ian/Desktop/DMCcpp/runDMC.cpp -o CMakeFiles/dmcSim.dir/runDMC.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/ian/Documents/Projects/DMC/simulationCode/DMCcpp/runDMC.cpp -o CMakeFiles/dmcSim.dir/runDMC.cpp.s
 
 # Object files for target dmcSim
 dmcSim_OBJECTS = \
@@ -125,7 +125,7 @@ dmcSim: CMakeFiles/dmcSim.dir/outDMC.cpp.o
 dmcSim: CMakeFiles/dmcSim.dir/runDMC.cpp.o
 dmcSim: CMakeFiles/dmcSim.dir/build.make
 dmcSim: CMakeFiles/dmcSim.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/ian/Desktop/DMCcpp/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX executable dmcSim"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/ian/Documents/Projects/DMC/simulationCode/DMCcpp/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX executable dmcSim"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/dmcSim.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -138,6 +138,6 @@ CMakeFiles/dmcSim.dir/clean:
 .PHONY : CMakeFiles/dmcSim.dir/clean
 
 CMakeFiles/dmcSim.dir/depend:
-	cd /home/ian/Desktop/DMCcpp && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/ian/Desktop/DMCcpp /home/ian/Desktop/DMCcpp /home/ian/Desktop/DMCcpp /home/ian/Desktop/DMCcpp /home/ian/Desktop/DMCcpp/CMakeFiles/dmcSim.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/ian/Documents/Projects/DMC/simulationCode/DMCcpp && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/ian/Documents/Projects/DMC/simulationCode/DMCcpp /home/ian/Documents/Projects/DMC/simulationCode/DMCcpp /home/ian/Documents/Projects/DMC/simulationCode/DMCcpp /home/ian/Documents/Projects/DMC/simulationCode/DMCcpp /home/ian/Documents/Projects/DMC/simulationCode/DMCcpp/CMakeFiles/dmcSim.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/dmcSim.dir/depend
 
