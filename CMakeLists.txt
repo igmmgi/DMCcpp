@@ -8,12 +8,8 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O2")
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(dmcSim
-  inDMC.cpp
-  inDMC.h
-  main.cpp
-  outDMC.cpp
-  outDMC.h
-  runDMC.cpp
-  runDMC.h)
+include_directories(include)
+file(GLOB SOURCES "src/*.cpp")
+
+add_executable(dmcSim ${SOURCES})
 

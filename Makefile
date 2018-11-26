@@ -123,113 +123,113 @@ dmcSim/fast:
 	$(MAKE) -f CMakeFiles/dmcSim.dir/build.make CMakeFiles/dmcSim.dir/build
 .PHONY : dmcSim/fast
 
-inDMC.o: inDMC.cpp.o
+src/inDMC.o: src/inDMC.cpp.o
 
-.PHONY : inDMC.o
-
-# target to build an object file
-inDMC.cpp.o:
-	$(MAKE) -f CMakeFiles/dmcSim.dir/build.make CMakeFiles/dmcSim.dir/inDMC.cpp.o
-.PHONY : inDMC.cpp.o
-
-inDMC.i: inDMC.cpp.i
-
-.PHONY : inDMC.i
-
-# target to preprocess a source file
-inDMC.cpp.i:
-	$(MAKE) -f CMakeFiles/dmcSim.dir/build.make CMakeFiles/dmcSim.dir/inDMC.cpp.i
-.PHONY : inDMC.cpp.i
-
-inDMC.s: inDMC.cpp.s
-
-.PHONY : inDMC.s
-
-# target to generate assembly for a file
-inDMC.cpp.s:
-	$(MAKE) -f CMakeFiles/dmcSim.dir/build.make CMakeFiles/dmcSim.dir/inDMC.cpp.s
-.PHONY : inDMC.cpp.s
-
-main.o: main.cpp.o
-
-.PHONY : main.o
+.PHONY : src/inDMC.o
 
 # target to build an object file
-main.cpp.o:
-	$(MAKE) -f CMakeFiles/dmcSim.dir/build.make CMakeFiles/dmcSim.dir/main.cpp.o
-.PHONY : main.cpp.o
+src/inDMC.cpp.o:
+	$(MAKE) -f CMakeFiles/dmcSim.dir/build.make CMakeFiles/dmcSim.dir/src/inDMC.cpp.o
+.PHONY : src/inDMC.cpp.o
 
-main.i: main.cpp.i
+src/inDMC.i: src/inDMC.cpp.i
 
-.PHONY : main.i
+.PHONY : src/inDMC.i
 
 # target to preprocess a source file
-main.cpp.i:
-	$(MAKE) -f CMakeFiles/dmcSim.dir/build.make CMakeFiles/dmcSim.dir/main.cpp.i
-.PHONY : main.cpp.i
+src/inDMC.cpp.i:
+	$(MAKE) -f CMakeFiles/dmcSim.dir/build.make CMakeFiles/dmcSim.dir/src/inDMC.cpp.i
+.PHONY : src/inDMC.cpp.i
 
-main.s: main.cpp.s
+src/inDMC.s: src/inDMC.cpp.s
 
-.PHONY : main.s
+.PHONY : src/inDMC.s
 
 # target to generate assembly for a file
-main.cpp.s:
-	$(MAKE) -f CMakeFiles/dmcSim.dir/build.make CMakeFiles/dmcSim.dir/main.cpp.s
-.PHONY : main.cpp.s
+src/inDMC.cpp.s:
+	$(MAKE) -f CMakeFiles/dmcSim.dir/build.make CMakeFiles/dmcSim.dir/src/inDMC.cpp.s
+.PHONY : src/inDMC.cpp.s
 
-outDMC.o: outDMC.cpp.o
+src/main.o: src/main.cpp.o
 
-.PHONY : outDMC.o
+.PHONY : src/main.o
 
 # target to build an object file
-outDMC.cpp.o:
-	$(MAKE) -f CMakeFiles/dmcSim.dir/build.make CMakeFiles/dmcSim.dir/outDMC.cpp.o
-.PHONY : outDMC.cpp.o
+src/main.cpp.o:
+	$(MAKE) -f CMakeFiles/dmcSim.dir/build.make CMakeFiles/dmcSim.dir/src/main.cpp.o
+.PHONY : src/main.cpp.o
 
-outDMC.i: outDMC.cpp.i
+src/main.i: src/main.cpp.i
 
-.PHONY : outDMC.i
+.PHONY : src/main.i
 
 # target to preprocess a source file
-outDMC.cpp.i:
-	$(MAKE) -f CMakeFiles/dmcSim.dir/build.make CMakeFiles/dmcSim.dir/outDMC.cpp.i
-.PHONY : outDMC.cpp.i
+src/main.cpp.i:
+	$(MAKE) -f CMakeFiles/dmcSim.dir/build.make CMakeFiles/dmcSim.dir/src/main.cpp.i
+.PHONY : src/main.cpp.i
 
-outDMC.s: outDMC.cpp.s
+src/main.s: src/main.cpp.s
 
-.PHONY : outDMC.s
+.PHONY : src/main.s
 
 # target to generate assembly for a file
-outDMC.cpp.s:
-	$(MAKE) -f CMakeFiles/dmcSim.dir/build.make CMakeFiles/dmcSim.dir/outDMC.cpp.s
-.PHONY : outDMC.cpp.s
+src/main.cpp.s:
+	$(MAKE) -f CMakeFiles/dmcSim.dir/build.make CMakeFiles/dmcSim.dir/src/main.cpp.s
+.PHONY : src/main.cpp.s
 
-runDMC.o: runDMC.cpp.o
+src/outDMC.o: src/outDMC.cpp.o
 
-.PHONY : runDMC.o
+.PHONY : src/outDMC.o
 
 # target to build an object file
-runDMC.cpp.o:
-	$(MAKE) -f CMakeFiles/dmcSim.dir/build.make CMakeFiles/dmcSim.dir/runDMC.cpp.o
-.PHONY : runDMC.cpp.o
+src/outDMC.cpp.o:
+	$(MAKE) -f CMakeFiles/dmcSim.dir/build.make CMakeFiles/dmcSim.dir/src/outDMC.cpp.o
+.PHONY : src/outDMC.cpp.o
 
-runDMC.i: runDMC.cpp.i
+src/outDMC.i: src/outDMC.cpp.i
 
-.PHONY : runDMC.i
+.PHONY : src/outDMC.i
 
 # target to preprocess a source file
-runDMC.cpp.i:
-	$(MAKE) -f CMakeFiles/dmcSim.dir/build.make CMakeFiles/dmcSim.dir/runDMC.cpp.i
-.PHONY : runDMC.cpp.i
+src/outDMC.cpp.i:
+	$(MAKE) -f CMakeFiles/dmcSim.dir/build.make CMakeFiles/dmcSim.dir/src/outDMC.cpp.i
+.PHONY : src/outDMC.cpp.i
 
-runDMC.s: runDMC.cpp.s
+src/outDMC.s: src/outDMC.cpp.s
 
-.PHONY : runDMC.s
+.PHONY : src/outDMC.s
 
 # target to generate assembly for a file
-runDMC.cpp.s:
-	$(MAKE) -f CMakeFiles/dmcSim.dir/build.make CMakeFiles/dmcSim.dir/runDMC.cpp.s
-.PHONY : runDMC.cpp.s
+src/outDMC.cpp.s:
+	$(MAKE) -f CMakeFiles/dmcSim.dir/build.make CMakeFiles/dmcSim.dir/src/outDMC.cpp.s
+.PHONY : src/outDMC.cpp.s
+
+src/runDMC.o: src/runDMC.cpp.o
+
+.PHONY : src/runDMC.o
+
+# target to build an object file
+src/runDMC.cpp.o:
+	$(MAKE) -f CMakeFiles/dmcSim.dir/build.make CMakeFiles/dmcSim.dir/src/runDMC.cpp.o
+.PHONY : src/runDMC.cpp.o
+
+src/runDMC.i: src/runDMC.cpp.i
+
+.PHONY : src/runDMC.i
+
+# target to preprocess a source file
+src/runDMC.cpp.i:
+	$(MAKE) -f CMakeFiles/dmcSim.dir/build.make CMakeFiles/dmcSim.dir/src/runDMC.cpp.i
+.PHONY : src/runDMC.cpp.i
+
+src/runDMC.s: src/runDMC.cpp.s
+
+.PHONY : src/runDMC.s
+
+# target to generate assembly for a file
+src/runDMC.cpp.s:
+	$(MAKE) -f CMakeFiles/dmcSim.dir/build.make CMakeFiles/dmcSim.dir/src/runDMC.cpp.s
+.PHONY : src/runDMC.cpp.s
 
 # Help Target
 help:
@@ -240,18 +240,18 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... dmcSim"
 	@echo "... edit_cache"
-	@echo "... inDMC.o"
-	@echo "... inDMC.i"
-	@echo "... inDMC.s"
-	@echo "... main.o"
-	@echo "... main.i"
-	@echo "... main.s"
-	@echo "... outDMC.o"
-	@echo "... outDMC.i"
-	@echo "... outDMC.s"
-	@echo "... runDMC.o"
-	@echo "... runDMC.i"
-	@echo "... runDMC.s"
+	@echo "... src/inDMC.o"
+	@echo "... src/inDMC.i"
+	@echo "... src/inDMC.s"
+	@echo "... src/main.o"
+	@echo "... src/main.i"
+	@echo "... src/main.s"
+	@echo "... src/outDMC.o"
+	@echo "... src/outDMC.i"
+	@echo "... src/outDMC.s"
+	@echo "... src/runDMC.o"
+	@echo "... src/runDMC.i"
+	@echo "... src/runDMC.s"
 .PHONY : help
 
 
