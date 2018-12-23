@@ -75,8 +75,8 @@ void runDMCsim(Prms &p,
             trial[0] += activation[0];
             for (auto i = 1u; i < activation.size(); i++) {
                 activation[i] = activation[i - 1] + mu_vec[i] + (p.sigma * randDist()) + dr[trl];
-                if (!criterion && fabs(activation[i]) >= p.bnds) {
-                    (activation[i] > 0 ? rts : errs).push_back(i + resDist() + 1); // zero index
+                if (!criterion && fabs(activation[i]) > p.bnds) {
+                    (activation[i] > p.bnds ? rts : errs).push_back(i + resDist() + 1); // zero index
                     criterion = true;
                     if (!p.fullData) break;
                 }

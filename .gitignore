@@ -1,4 +1,5 @@
 .directory
+.vscode/
 .idea/
 cp2RcppDir.sh
 dmcSim
