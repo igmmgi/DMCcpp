@@ -3,6 +3,7 @@
 .idea/
 cp2RcppDir.sh
 dmcSim
+Makefile
 
 # cmake stuff
 CMakeCache.txt
