@@ -156,7 +156,7 @@ void run_simulation(
 
     double activation_trial = 0;
     for (auto trl = 0u; trl < p.nTrl; trl++) {
-        activation_trial = sp[0];
+        activation_trial = sp[trl];
         for (auto i = 0u; i < p.tmax; i++) {
             activation_trial += mu_vec[i] + dr[trl] + (p.sigma * randDist());
             if (fabs(activation_trial) > p.bnds) {
