@@ -1,17 +1,16 @@
 #include <iostream>
-#include <fstream>
 #include <iomanip>
 #include <vector>
 #include <map>
 #include <cmath>
 #include "inDMC.h"
-#include "outDMC.h"
 
-
-void printResults(Prms &p,
-                  std::map<std::string, std::vector<double> > &resSum,
-                  std::map<std::string, std::vector<double> > &resDelta,
-                  std::map<std::string, std::vector<double> > &resCAF) {
+void printResults(
+        Prms &p,
+        std::map<std::string, std::vector<double> > &resSum,
+        std::map<std::string, std::vector<double> > &resDelta,
+        std::map<std::string, std::vector<double> > &resCAF
+        ) {
 
     std::cout << "Results Summary:" << std::endl;
     std::cout << "\trtCor\tsdRtCor\tperErr\trtErr\tsdRtErr" << std::endl;

@@ -1,120 +1,168 @@
 #include <chrono>
-#include <iostream>
 #include <vector>
 #include <utility>
 #include <map>
 #include <boost/random.hpp>
 #include "runDMC.h"
 
-void runDMCsim(Prms &p,
-               std::map<std::string, std::vector<double> > &resSummary,
-               std::map<std::string, std::vector<double> > &resDelta,
-               std::map<std::string, std::vector<double> > &resCAF,
-               std::map<std::string, std::vector<double> > &simulation,
-               std::map<std::string, std::vector<std::vector<double> > > &trials) {
+void runDMCsim(
+        Prms &p,
+        std::map<std::string, std::vector<double> > &resSummary,
+        std::map<std::string, std::vector<double> > &resDelta,
+        std::map<std::string, std::vector<double> > &resCAF,
+        std::map<std::string, std::vector<double> > &simulation,
+        std::map<std::string, std::vector<std::vector<double> > > &trials,
+        const std::string& comp,
+        int sign,
+        std::vector<double> dr_mean,
+        std::vector<double> sp_mean
+        ) {
 
-    // random process
+        std::vector<double> rts;
+        std::vector<double> errs;
+        std::vector<double> activation_sum(p.tmax);
+        std::vector<std::vector<double>> trial_matrix(p.nTrlData, std::vector<double>(p.tmax));  // needed if plotting individual trials
+
+        std::vector<double> mu_vec(p.tmax);
+        for (auto i = 0u; i < mu_vec.size(); i++) {
+            mu_vec[i] = sign * simulation["eq4"][i] * ((p.aaShape - 1) / (i+1) - 1 / p.tau);
+        }
+
+        // variable drift rate?
+        std::vector<double> dr(p.nTrl, p.mu);
+        if (p.varDR) {
+            variable_drift_rate(p, dr, dr_mean);
+        }
+
+        // variable starting point?
+        std::vector<double> sp(p.nTrl);
+        if (p.varSP) {
+            variable_starting_point(p, sp, sp_mean);
+        }
+
+        // run simulation and store rts for correct/incorrect trials
+        if (p.fullData) {
+            run_simulation(p, activation_sum, trial_matrix, mu_vec, sp, dr, rts, errs);
+        } else {
+            run_simulation(p, mu_vec, sp, dr, rts, errs);
+        }
+
+        simulation["activation_" + comp] = activation_sum;
+        simulation["rts_" + comp] = rts;
+        trials["trials_" + comp] = trial_matrix;
+
+        calculate_summary(rts, errs, p.nTrl, resSummary, comp);
+        calculate_percentile(p.stepDelta, rts, resDelta, comp);
+        calculate_caf(rts, errs, p.stepCAF, resCAF, comp);
+
+}
+
+void variable_drift_rate(Prms &p, std::vector<double> &dr, std::vector<double> &dr_mean) {
     typedef boost::mt19937 RNGType;
     const uint32_t s = p.setSeed ? 1 : std::time(nullptr);
     RNGType rng(s);
 
-    // need 4 possible distributions (2 normal, 2 beta)
-    boost::normal_distribution<> snd(0.0, 1.0);                    // standard normal distributoin
-    boost::normal_distribution<> nd_mean_sd(p.resMean, p.resSD);   // normal distribution with given mean/SD
     boost::random::beta_distribution<> bdDR(p.drShape, p.drShape); // beta distribution with defined shape a, shape b
-    boost::random::beta_distribution<> bdSP(p.spShape, p.spShape); // beta distribution with defined shape a, shape b
-
-    boost::variate_generator<RNGType, boost::normal_distribution<>       > randDist(rng, snd);
-    boost::variate_generator<RNGType, boost::normal_distribution<>       > resDist(rng, nd_mean_sd);
     boost::variate_generator<RNGType, boost::random::beta_distribution<> > betaDistDR(rng, bdDR);
+
+    for(auto &i : dr) i = betaDistDR() * (p.drLimHigh - p.drLimLow) + p.drLimLow;
+    dr_mean.push_back(accumulate(dr.begin(), dr.end(), 0.0) / dr.size());
+}
+
+void variable_starting_point(Prms &p, std::vector<double> &sp, std::vector<double> &sp_mean) {
+    typedef boost::mt19937 RNGType;
+    const uint32_t s = p.setSeed ? 1 : std::time(nullptr);
+    RNGType rng(s);
+
+    boost::random::beta_distribution<> bdSP(p.spShape, p.spShape); // beta distribution with defined shape a, shape b
     boost::variate_generator<RNGType, boost::random::beta_distribution<> > betaDistSP(rng, bdSP);
 
-    // equation 4
-    std::vector<double> eq4(p.tmax);
-    for (unsigned int i = 1; i <= p.tmax; i++) {
-        eq4[i-1] = (p.amp * exp(-(i / p.tau))) * pow(((exp(1) * i / (p.aaShape - 1) / p.tau)), (p.aaShape - 1));
-    }
-
-    std::vector<double> mu_vec(p.tmax);
-    std::vector<double> activation_trial(p.tmax);
-    std::vector<double> activation_sum(p.tmax);
-    std::vector<double> dr(p.nTrl, p.mu);
-    std::vector<double> dr_mean(2);
-    std::vector<double> sp(p.nTrl);
-    std::vector<double> sp_mean(2);
-    std::vector<std::vector<double>> trial_matrix(p.nTrlData, std::vector<double>(p.tmax));  // if plotting individual trials
-    std::vector <std::string> compatibility{"comp", "incomp"};
-
-    for (const auto &condition:compatibility) {
-
-        std::vector<double> rts;
-        std::vector<double> errs;
-
-        int sign = condition == "comp" ? 1 : -1;
-        for (auto i = 0u; i < mu_vec.size(); i++) {
-            mu_vec[i] = sign * eq4[i] * ((p.aaShape - 1) / (i+1) - 1 / p.tau);
-        }
-
-        // variable drift rate?
-        if (p.varDR) {
-            for(auto &i : dr) i = betaDistDR() * (p.drLimHigh - p.drLimLow) + p.drLimLow;
-            dr_mean.push_back(accumulate(dr.begin(), dr.end(), 0.0) / dr.size());
-        }
-
-        // variable starting point?
-        if (p.varSP) {
-            for(auto &i : sp) i = betaDistSP() * (p.spLimHigh - p.spLimLow) + p.spLimLow;
-            sp_mean.push_back(accumulate(sp.begin(), sp.end(), 0.0) / sp.size());
-        }
-
-        // run simulation and store rts for correct/incorrect trials
-        bool criterion;
-        for (auto trl = 0u; trl < p.nTrl; trl++) {
-            criterion = false;
-            activation_trial[0] = mu_vec[0] + sp[trl] + dr[trl] + (p.sigma * randDist()); 
-            activation_sum[0] += activation_trial[0];
-            for (auto i = 1u; i < activation_trial.size(); i++) {
-                activation_trial[i] = activation_trial[i - 1] + mu_vec[i] + dr[trl] + (p.sigma * randDist());
-                if (!criterion && fabs(activation_trial[i]) > p.bnds) {
-                    (activation_trial[i] > p.bnds ? rts : errs).push_back(i + resDist() + 1); // zero index
-                    criterion = true;
-                    if (!p.fullData) break;
-                }
-                if (trl < p.nTrlData) trial_matrix[trl][i] = activation_trial[i];
-                activation_sum[i] += activation_trial[i];
-            }
-        }
-
-        // gather results for full plots
-        for (auto i = 0u; i < p.tmax; i++) {
-            activation_sum[i] /= p.nTrl;
-        }
-        
-        simulation["eq4"] = eq4;
-        simulation["activation_" + condition] = activation_sum;
-        simulation["rts_" + condition] = rts;
-        trials["trials_" + condition] = trial_matrix;
-
-        calculate_summary(rts, errs, p.nTrl, resSummary, condition);
-        calculate_percentile(p.stepDelta, rts, resDelta, condition);
-        calculate_caf(rts, errs, p.stepCAF, resCAF, condition);
-
-    }
-
-    // just keep average drift rate/starting point across both comp/incomp trials
-    simulation["dr_sp"].push_back(!p.varDR ? p.mu : (dr_mean[0] + dr_mean[1]) / 2);
-    simulation["dr_sp"].push_back(!p.varSP ?    0 : (sp_mean[0] + sp_mean[1]) / 2);
-
-    calculate_delta(resDelta);
-
+    for(auto &i : sp) i = betaDistSP() * (p.spLimHigh - p.spLimLow) + p.spLimLow;
+    sp_mean.push_back(accumulate(sp.begin(), sp.end(), 0.0) / sp.size());
 }
 
 
-void calculate_summary(std::vector<double> &rts,
-                       std::vector<double> &errs,
-                       unsigned long nTrl,
-                       std::map<std::string, std::vector<double> > &resSummary,
-                       std::string condition){
+void run_simulation(
+        Prms &p,
+        std::vector<double> &mu_vec,
+        std::vector<double> &sp,
+        std::vector<double> &dr,
+        std::vector<double> &rts,
+        std::vector<double> &errs
+        ) {
+
+    typedef boost::mt19937 RNGType;
+    const uint32_t s = p.setSeed ? 1 : std::time(nullptr);
+    RNGType rng(s);
+
+    boost::normal_distribution<> snd(0.0, 1.0);  // standard normal distribution
+    boost::normal_distribution<> nd_mean_sd(p.resMean, p.resSD);   // normal distribution with given mean/SD
+    boost::variate_generator<RNGType, boost::normal_distribution<> > randDist(rng, snd);
+    boost::variate_generator<RNGType, boost::normal_distribution<> > resDist(rng, nd_mean_sd);
+
+    double activation_trial = 0;
+    for (auto trl = 0u; trl < p.nTrl; trl++) {
+        activation_trial = sp[0];
+        for (auto i = 0u; i < p.tmax; i++) {
+            activation_trial += mu_vec[i] + dr[trl] + (p.sigma * randDist());
+            if (fabs(activation_trial) > p.bnds) {
+                (activation_trial > p.bnds ? rts : errs).push_back(i + resDist() + 1); // zero index
+                break;
+            }
+        }
+    }
+
+}
+
+void run_simulation(
+        Prms &p,
+        std::vector<double> &activation_sum,
+        std::vector<std::vector<double>> &trial_matrix,
+        std::vector<double> &mu_vec,
+        std::vector<double> &sp,
+        std::vector<double> &dr,
+        std::vector<double> &rts,
+        std::vector<double> &errs
+        ) {
+
+     typedef boost::mt19937 RNGType;
+     const uint32_t s = p.setSeed ? 1 : std::time(nullptr);
+     RNGType rng(s);
+
+     boost::normal_distribution<> snd(0.0, 1.0);  // standard normal distributoin
+     boost::normal_distribution<> nd_mean_sd(p.resMean, p.resSD);   // normal distribution with given mean/SD
+     boost::variate_generator<RNGType, boost::normal_distribution<> > randDist(rng, snd);
+     boost::variate_generator<RNGType, boost::normal_distribution<> > resDist(rng, nd_mean_sd);
+
+    std::vector<double> activation_trial(p.tmax);
+    bool criterion;
+     for (auto trl = 0u; trl < p.nTrl; trl++) {
+         criterion = false;
+         activation_trial[0] = mu_vec[0] + sp[trl] + dr[trl] + (p.sigma * randDist());
+         activation_sum[0] += activation_trial[0];
+         for (auto i = 1u; i < activation_trial.size(); i++) {
+             activation_trial[i] = activation_trial[i - 1] + mu_vec[i] + dr[trl] + (p.sigma * randDist());
+             if (!criterion && fabs(activation_trial[i]) > p.bnds) {
+                 (activation_trial[i] > p.bnds ? rts : errs).push_back(i + resDist() + 1); // zero index
+                 criterion = true;
+             }
+             if (trl < p.nTrlData) trial_matrix[trl][i] = activation_trial[i];
+             activation_sum[i] += activation_trial[i];
+         }
+     }
+    for (auto i = 0u; i < p.tmax; i++) {
+        activation_sum[i] /= p.nTrl;
+    }
+}
+
+
+void calculate_summary(
+        std::vector<double> &rts,
+        std::vector<double> &errs,
+        unsigned long nTrl,
+        std::map<std::string, std::vector<double> > &resSummary,
+        const std::string& condition
+        ) {
 
     // rtCor, sdRtCor, perErr, rtErr, sdRtErr
     std::vector<double> res(5);
@@ -129,10 +177,12 @@ void calculate_summary(std::vector<double> &rts,
 }
 
 
-void calculate_percentile(int stepDelta,
-                          std::vector<double> &rts,
-                          std::map<std::string, std::vector<double> > &resDelta,
-                          std::string condition) {
+void calculate_percentile(
+        int stepDelta,
+        std::vector<double> &rts,
+        std::map<std::string, std::vector<double> > &resDelta,
+        const std::string& condition
+        ) {
 
     std::sort(rts.begin(), rts.end());
 
@@ -148,6 +198,7 @@ void calculate_percentile(int stepDelta,
         resDelta["delta_pct_" + condition].push_back(rts[pct_idx_int + ((rts[pct_idx_int+1]-rts[pct_idx_int])*pct_idx_dec)]);
 
     }
+
 }
 
 
@@ -159,11 +210,13 @@ void calculate_delta(std::map<std::string, std::vector<double> > &resDelta) {
 }
 
 
-void calculate_caf(std::vector<double> &rts,
-                   std::vector<double> &errs,
-                   int stepCAF,
-                   std::map<std::string, std::vector<double> > &resCAF,
-                   std::string condition) {
+void calculate_caf(
+        std::vector<double> &rts,
+        std::vector<double> &errs,
+        int stepCAF,
+        std::map<std::string, std::vector<double> > &resCAF,
+        const std::string& condition
+        ) {
 
     std::vector<bool> is_err(rts.size(), false);
     std::vector<bool> tmp(errs.size(), true);

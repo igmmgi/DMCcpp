@@ -1,8 +1,6 @@
-#include <chrono>
 #include <iostream>
 #include <getopt.h>
 #include "inDMC.h"
-#include <boost/random.hpp>
 
 void showHelp() {
     std::cout << "DMC model simulation\n"
