@@ -1,6 +1,7 @@
 .directory
 .vscode/
 .idea/
+DMCcpp.cbp
 cp2RcppDir.sh
 dmcSim
 Makefile
