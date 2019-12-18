@@ -10,8 +10,9 @@ set(CMAKE_CXX_FLAGS "-Wall -Wextra")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 include_directories(include)
-file(GLOB SOURCES "src/*.cpp")
 
-add_executable(dmcSim ${SOURCES})
-
+add_executable(dmcSim src/dmcSim.cpp src/inDMC.cpp src/outDMC.cpp src/runDMC.cpp)
 target_link_libraries( dmcSim ${CMAKE_THREAD_LIBS_INIT} )
+
+add_executable(dmcSimSeq src/dmcSimSeq.cpp src/inDMCseq.cpp src/outDMCseq.cpp src/runDMCseq.cpp)
+target_link_libraries( dmcSimSeq ${CMAKE_THREAD_LIBS_INIT} )
