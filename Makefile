@@ -69,8 +69,8 @@ rebuild_cache/fast: rebuild_cache
 
 # Special rule for the target edit_cache
 edit_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake cache editor..."
-	/usr/bin/ccmake -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
+	/usr/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
 .PHONY : edit_cache
 
 # Special rule for the target edit_cache
@@ -123,19 +123,6 @@ dmcSim/fast:
 	$(MAKE) -f CMakeFiles/dmcSim.dir/build.make CMakeFiles/dmcSim.dir/build
 .PHONY : dmcSim/fast
 
-#=============================================================================
-# Target rules for targets named dmcSimSeq
-
-# Build rule for target.
-dmcSimSeq: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 dmcSimSeq
-.PHONY : dmcSimSeq
-
-# fast build rule for target.
-dmcSimSeq/fast:
-	$(MAKE) -f CMakeFiles/dmcSimSeq.dir/build.make CMakeFiles/dmcSimSeq.dir/build
-.PHONY : dmcSimSeq/fast
-
 src/dmcSim.o: src/dmcSim.cpp.o
 
 .PHONY : src/dmcSim.o
@@ -162,33 +149,6 @@ src/dmcSim.s: src/dmcSim.cpp.s
 src/dmcSim.cpp.s:
 	$(MAKE) -f CMakeFiles/dmcSim.dir/build.make CMakeFiles/dmcSim.dir/src/dmcSim.cpp.s
 .PHONY : src/dmcSim.cpp.s
-
-src/dmcSimSeq.o: src/dmcSimSeq.cpp.o
-
-.PHONY : src/dmcSimSeq.o
-
-# target to build an object file
-src/dmcSimSeq.cpp.o:
-	$(MAKE) -f CMakeFiles/dmcSimSeq.dir/build.make CMakeFiles/dmcSimSeq.dir/src/dmcSimSeq.cpp.o
-.PHONY : src/dmcSimSeq.cpp.o
-
-src/dmcSimSeq.i: src/dmcSimSeq.cpp.i
-
-.PHONY : src/dmcSimSeq.i
-
-# target to preprocess a source file
-src/dmcSimSeq.cpp.i:
-	$(MAKE) -f CMakeFiles/dmcSimSeq.dir/build.make CMakeFiles/dmcSimSeq.dir/src/dmcSimSeq.cpp.i
-.PHONY : src/dmcSimSeq.cpp.i
-
-src/dmcSimSeq.s: src/dmcSimSeq.cpp.s
-
-.PHONY : src/dmcSimSeq.s
-
-# target to generate assembly for a file
-src/dmcSimSeq.cpp.s:
-	$(MAKE) -f CMakeFiles/dmcSimSeq.dir/build.make CMakeFiles/dmcSimSeq.dir/src/dmcSimSeq.cpp.s
-.PHONY : src/dmcSimSeq.cpp.s
 
 src/inDMC.o: src/inDMC.cpp.o
 
@@ -217,33 +177,6 @@ src/inDMC.cpp.s:
 	$(MAKE) -f CMakeFiles/dmcSim.dir/build.make CMakeFiles/dmcSim.dir/src/inDMC.cpp.s
 .PHONY : src/inDMC.cpp.s
 
-src/inDMCseq.o: src/inDMCseq.cpp.o
-
-.PHONY : src/inDMCseq.o
-
-# target to build an object file
-src/inDMCseq.cpp.o:
-	$(MAKE) -f CMakeFiles/dmcSimSeq.dir/build.make CMakeFiles/dmcSimSeq.dir/src/inDMCseq.cpp.o
-.PHONY : src/inDMCseq.cpp.o
-
-src/inDMCseq.i: src/inDMCseq.cpp.i
-
-.PHONY : src/inDMCseq.i
-
-# target to preprocess a source file
-src/inDMCseq.cpp.i:
-	$(MAKE) -f CMakeFiles/dmcSimSeq.dir/build.make CMakeFiles/dmcSimSeq.dir/src/inDMCseq.cpp.i
-.PHONY : src/inDMCseq.cpp.i
-
-src/inDMCseq.s: src/inDMCseq.cpp.s
-
-.PHONY : src/inDMCseq.s
-
-# target to generate assembly for a file
-src/inDMCseq.cpp.s:
-	$(MAKE) -f CMakeFiles/dmcSimSeq.dir/build.make CMakeFiles/dmcSimSeq.dir/src/inDMCseq.cpp.s
-.PHONY : src/inDMCseq.cpp.s
-
 src/outDMC.o: src/outDMC.cpp.o
 
 .PHONY : src/outDMC.o
@@ -270,33 +203,6 @@ src/outDMC.s: src/outDMC.cpp.s
 src/outDMC.cpp.s:
 	$(MAKE) -f CMakeFiles/dmcSim.dir/build.make CMakeFiles/dmcSim.dir/src/outDMC.cpp.s
 .PHONY : src/outDMC.cpp.s
-
-src/outDMCseq.o: src/outDMCseq.cpp.o
-
-.PHONY : src/outDMCseq.o
-
-# target to build an object file
-src/outDMCseq.cpp.o:
-	$(MAKE) -f CMakeFiles/dmcSimSeq.dir/build.make CMakeFiles/dmcSimSeq.dir/src/outDMCseq.cpp.o
-.PHONY : src/outDMCseq.cpp.o
-
-src/outDMCseq.i: src/outDMCseq.cpp.i
-
-.PHONY : src/outDMCseq.i
-
-# target to preprocess a source file
-src/outDMCseq.cpp.i:
-	$(MAKE) -f CMakeFiles/dmcSimSeq.dir/build.make CMakeFiles/dmcSimSeq.dir/src/outDMCseq.cpp.i
-.PHONY : src/outDMCseq.cpp.i
-
-src/outDMCseq.s: src/outDMCseq.cpp.s
-
-.PHONY : src/outDMCseq.s
-
-# target to generate assembly for a file
-src/outDMCseq.cpp.s:
-	$(MAKE) -f CMakeFiles/dmcSimSeq.dir/build.make CMakeFiles/dmcSimSeq.dir/src/outDMCseq.cpp.s
-.PHONY : src/outDMCseq.cpp.s
 
 src/runDMC.o: src/runDMC.cpp.o
 
@@ -325,33 +231,6 @@ src/runDMC.cpp.s:
 	$(MAKE) -f CMakeFiles/dmcSim.dir/build.make CMakeFiles/dmcSim.dir/src/runDMC.cpp.s
 .PHONY : src/runDMC.cpp.s
 
-src/runDMCseq.o: src/runDMCseq.cpp.o
-
-.PHONY : src/runDMCseq.o
-
-# target to build an object file
-src/runDMCseq.cpp.o:
-	$(MAKE) -f CMakeFiles/dmcSimSeq.dir/build.make CMakeFiles/dmcSimSeq.dir/src/runDMCseq.cpp.o
-.PHONY : src/runDMCseq.cpp.o
-
-src/runDMCseq.i: src/runDMCseq.cpp.i
-
-.PHONY : src/runDMCseq.i
-
-# target to preprocess a source file
-src/runDMCseq.cpp.i:
-	$(MAKE) -f CMakeFiles/dmcSimSeq.dir/build.make CMakeFiles/dmcSimSeq.dir/src/runDMCseq.cpp.i
-.PHONY : src/runDMCseq.cpp.i
-
-src/runDMCseq.s: src/runDMCseq.cpp.s
-
-.PHONY : src/runDMCseq.s
-
-# target to generate assembly for a file
-src/runDMCseq.cpp.s:
-	$(MAKE) -f CMakeFiles/dmcSimSeq.dir/build.make CMakeFiles/dmcSimSeq.dir/src/runDMCseq.cpp.s
-.PHONY : src/runDMCseq.cpp.s
-
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -361,31 +240,18 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... dmcSim"
 	@echo "... edit_cache"
-	@echo "... dmcSimSeq"
 	@echo "... src/dmcSim.o"
 	@echo "... src/dmcSim.i"
 	@echo "... src/dmcSim.s"
-	@echo "... src/dmcSimSeq.o"
-	@echo "... src/dmcSimSeq.i"
-	@echo "... src/dmcSimSeq.s"
 	@echo "... src/inDMC.o"
 	@echo "... src/inDMC.i"
 	@echo "... src/inDMC.s"
-	@echo "... src/inDMCseq.o"
-	@echo "... src/inDMCseq.i"
-	@echo "... src/inDMCseq.s"
 	@echo "... src/outDMC.o"
 	@echo "... src/outDMC.i"
 	@echo "... src/outDMC.s"
-	@echo "... src/outDMCseq.o"
-	@echo "... src/outDMCseq.i"
-	@echo "... src/outDMCseq.s"
 	@echo "... src/runDMC.o"
 	@echo "... src/runDMC.i"
 	@echo "... src/runDMC.s"
-	@echo "... src/runDMCseq.o"
-	@echo "... src/runDMCseq.i"
-	@echo "... src/runDMCseq.s"
 .PHONY : help
 
 
