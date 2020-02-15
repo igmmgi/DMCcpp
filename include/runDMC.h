@@ -19,7 +19,7 @@ void runDMCsim_t(
         std::map<std::string, std::vector<double> > &resCAF,
         std::map<std::string, std::vector<double> > &simulation,
         std::map<std::string, std::vector<std::vector<double>>> &trials,
-        std::string comp,
+        const std::string& comp,
         int sign,
         std::vector<double> dr_mean,
         std::vector<double> sp_mean
@@ -30,7 +30,7 @@ void calculate_summary(
         std::vector<double> &errs,
         unsigned long nTrl,
         std::map<std::string, std::vector<double> > &resSum,
-        std::string cond
+        const std::string& cond
 );
 
 void calculate_percentile(
@@ -38,7 +38,7 @@ void calculate_percentile(
         std::vector<double> &rts,
         std::map<std::string,
                 std::vector<double> > &resDistribution,
-        std::string cond
+        const std::string& cond
 );
 
 void calculate_delta(std::map<std::string, std::vector<double> > &resDistribution);
@@ -52,7 +52,7 @@ void calculate_caf(
         std::vector<double> &errs,
         int nBins,
         std::map<std::string, std::vector<double> > &resCAF,
-        std::string cond
+        const std::string& cond
 );
 
 void run_simulation(

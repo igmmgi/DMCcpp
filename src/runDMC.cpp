@@ -18,9 +18,8 @@ void runDMCsim(
 
     // equation 4
     std::vector<double> eq4(p.tmax);
-    for (unsigned int i = 1; i <= p.tmax; i++) {
+    for (unsigned int i = 1; i <= p.tmax; i++)
         eq4[i - 1] = (p.amp * exp(-(i / p.tau))) * pow(((exp(1) * i / (p.aaShape - 1) / p.tau)), (p.aaShape - 1));
-    }
     simulation["eq4"] = eq4;
 
     // variable drift-rate and starting point means
@@ -45,9 +44,7 @@ void runDMCsim(
                              std::ref(sp_mean));
     }
     for (auto &thread : threads) {
-        if (thread.joinable()) {
-            thread.join();
-        }
+        if (thread.joinable()) thread.join();
     }
 
     // finalize results requiring both comp/incomp
@@ -66,7 +63,7 @@ void runDMCsim_t(
         std::map<std::string, std::vector<double> > &resCAF,
         std::map<std::string, std::vector<double> > &simulation,
         std::map<std::string, std::vector<std::vector<double> > > &trials,
-        std::string comp,
+        const std::string& comp,
         int sign,
         std::vector<double> dr_mean,
         std::vector<double> sp_mean
@@ -78,28 +75,22 @@ void runDMCsim_t(
     std::vector<std::vector<double>> trial_matrix(p.nTrlData, std::vector<double>(p.tmax));  // needed if plotting individual trials
 
     std::vector<double> mu_vec(p.tmax);
-    for (auto i = 0u; i < mu_vec.size(); i++) {
+    for (auto i = 0u; i < mu_vec.size(); i++)
         mu_vec[i] = sign * simulation["eq4"][i] * ((p.aaShape - 1) / (i + 1) - 1 / p.tau);
-    }
 
     // variable drift rate?
     std::vector<double> dr(p.nTrl, p.mu);
-    if (p.varDR) {
-        variable_drift_rate(p, dr, dr_mean, sign);
-    }
+    if (p.varDR) variable_drift_rate(p, dr, dr_mean, sign);
 
     // variable starting point?
     std::vector<double> sp(p.nTrl);
-    if (p.varSP) {
-        variable_starting_point(p, sp, sp_mean, sign);
-    }
+    if (p.varSP) variable_starting_point(p, sp, sp_mean, sign);
 
     // run simulation and store rts for correct/incorrect trials
-    if (p.fullData) {
+    if (p.fullData)
         run_simulation(p, activation_sum, trial_matrix, mu_vec, sp, dr, rts, errs, sign);
-    } else {
+    else
         run_simulation(p, mu_vec, sp, dr, rts, errs, sign);
-    }
 
     simulation["activation_" + comp] = activation_sum;
     simulation["rts_" + comp] = rts;
@@ -198,9 +189,8 @@ void run_simulation(
             activation_sum[i] += activation_trial[i];
         }
     }
-    for (auto i = 0u; i < p.tmax; i++) {
+    for (auto i = 0u; i < p.tmax; i++)
         activation_sum[i] /= p.nTrl;
-    }
 }
 
 
@@ -209,7 +199,7 @@ void calculate_summary(
         std::vector<double> &errs,
         unsigned long nTrl,
         std::map<std::string, std::vector<double> > &resSummary,
-        std::string condition
+        const std::string& condition
 ) {
 
     // rtCor, sdRtCor, perErr, rtErr, sdRtErr
@@ -229,7 +219,7 @@ void calculate_percentile(
         int stepDelta,
         std::vector<double> &rts,
         std::map<std::string, std::vector<double> > &resDelta,
-        std::string condition
+        const std::string& condition
 ) {
 
     std::sort(rts.begin(), rts.end());
@@ -250,7 +240,6 @@ void calculate_percentile(
 
 }
 
-
 void calculate_delta(std::map<std::string, std::vector<double> > &resDelta) {
     for (auto i = 0u; i < resDelta["delta_pct_comp"].size(); i++) {
         resDelta["delta_pct_mean"].push_back((resDelta["delta_pct_comp"][i] + resDelta["delta_pct_incomp"][i]) / 2);
@@ -258,42 +247,34 @@ void calculate_delta(std::map<std::string, std::vector<double> > &resDelta) {
     }
 }
 
-
 void calculate_caf(
         std::vector<double> &rts,
         std::vector<double> &errs,
         int stepCAF,
         std::map<std::string, std::vector<double> > &resCAF,
-        std::string condition
+        const std::string& condition
 ) {
 
-    std::vector<bool> is_err(rts.size(), false);
-    std::vector<bool> tmp(errs.size(), true);
-
-    is_err.insert(is_err.end(), tmp.begin(), tmp.end());
-    rts.insert(rts.end(), errs.begin(), errs.end());
-
     std::vector<std::pair<double, bool> > comb;
-    for (auto i = 0u; i < rts.size(); i++) {
-        comb.emplace_back(std::make_pair(rts[i], is_err[i]));
-    }
+    comb.reserve(rts.size() + errs.size());
+    for (double & rt : rts)
+        comb.emplace_back(std::make_pair(rt, false));
+    for (double & err : errs)
+        comb.emplace_back(std::make_pair(err, true));
 
     std::sort(comb.begin(), comb.end());
     std::vector<int> bins(comb.size());
     int nBins = 100 / stepCAF;
-    for (auto i = 0u; i < comb.size(); i++) {
+    for (auto i = 0u; i < comb.size(); i++)
         bins[i] = int(nBins * (i) / comb.size());
-    }
 
     std::vector<long int> countErr(nBins, 0);
     std::vector<long int> countCor(nBins, 0);
-    for (auto i = 0u; i < bins.size(); i++) {
+    for (auto i = 0u; i < bins.size(); i++)
         (comb[i].second == 0) ? countCor[bins[i]]++ : countErr[bins[i]]++;
-    }
 
-    for (auto i = 0u; i < countCor.size(); i++) {
+    for (auto i = 0u; i < countCor.size(); i++)
         resCAF["caf_" + condition].push_back(1 - (countErr[i] / float(countCor[i] + countErr[i])));
-    }
 
 }
 
