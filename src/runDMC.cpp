@@ -229,12 +229,12 @@ void calculate_percentile(
     float pct_idx_dec;
     for (auto step = stepDelta; step < 100; step += stepDelta) {
 
-        pct_idx = step / 100.0 * (rts.size() + 1);
+        pct_idx     = (step / 100.0) * (rts.size()); 
         pct_idx_int = int(pct_idx);
-        pct_idx_dec = pct_idx - int(pct_idx);
+        pct_idx_dec = pct_idx - pct_idx_int; 
 
         resDelta["delta_pct_" + condition].push_back(
-                rts[pct_idx_int + ((rts[pct_idx_int + 1] - rts[pct_idx_int]) * pct_idx_dec)]);
+                rts[pct_idx_int] + ((rts[pct_idx_int + 1] - rts[pct_idx_int]) * pct_idx_dec));
 
     }
 
@@ -242,7 +242,7 @@ void calculate_percentile(
 
 void calculate_delta(std::map<std::string, std::vector<double> > &resDelta) {
     for (auto i = 0u; i < resDelta["delta_pct_comp"].size(); i++) {
-        resDelta["delta_pct_mean"].push_back((resDelta["delta_pct_comp"][i] + resDelta["delta_pct_incomp"][i]) / 2);
+        resDelta["delta_pct_mean"].push_back((resDelta["delta_pct_comp"][i]   + resDelta["delta_pct_incomp"][i]) / 2);
         resDelta["delta_pct_delta"].push_back(resDelta["delta_pct_incomp"][i] - resDelta["delta_pct_comp"][i]);
     }
 }
