@@ -1,6 +1,4 @@
-#include <chrono>
 #include <vector>
-#include <utility>
 #include <map>
 #include <boost/random.hpp>
 #include <thread>
@@ -43,9 +41,8 @@ void runDMCsim(
                              std::ref(dr_mean),
                              std::ref(sp_mean));
     }
-    for (auto &thread : threads) {
+    for (auto &thread : threads) 
         if (thread.joinable()) thread.join();
-    }
 
     // finalize results requiring both comp/incomp
     calculate_delta(resDelta);
@@ -78,11 +75,9 @@ void runDMCsim_t(
     for (auto i = 0u; i < mu_vec.size(); i++)
         mu_vec[i] = sign * simulation["eq4"][i] * ((p.aaShape - 1) / (i + 1) - 1 / p.tau);
 
-    // variable drift rate?
+    // variable drift rate/starting point?
     std::vector<double> dr(p.nTrl, p.mu);
     if (p.varDR) variable_drift_rate(p, dr, dr_mean, sign);
-
-    // variable starting point?
     std::vector<double> sp(p.nTrl);
     if (p.varSP) variable_starting_point(p, sp, sp_mean, sign);
 
