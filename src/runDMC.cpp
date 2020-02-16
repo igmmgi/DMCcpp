@@ -3,7 +3,6 @@
 #include <boost/random.hpp>
 #include <thread>
 #include "runDMC.h"
-#include <random>
 
 void runDMCsim(
         Prms &p,
