@@ -173,15 +173,15 @@ void printInputArgs(Prms &p) {
     std::cout << "bnds: " << p.bnds << "\n";
     std::cout << "resMean: " << p.resMean << "\n";
     std::cout << "resSD: " << p.resSD << "\n";
-    std::cout << "nTrl: " << p.nTrl << "\n";
-    std::cout << "tmax: " << p.tmax << "\n";
+    // std::cout << "nTrl: " << p.nTrl << "\n";
+    // std::cout << "tmax: " << p.tmax << "\n";
     if (p.varSP) {
-        std::cout << "varSP: " << p.varSP << "\n";
+        // std::cout << "varSP: " << p.varSP << "\n";
         std::cout << "spShape: " << p.spShape << "\n";
         std::cout << "spLims: " << p.spLimLow << " to " << p.spLimHigh << "\n";
     }
     if (p.varDR) {
-        std::cout << "varDR: " << p.varDR << "\n";
+        // std::cout << "varDR: " << p.varDR << "\n";
         std::cout << "drShape: " << p.drShape << "\n";
         std::cout << "drLims: " << p.drLimLow << " to " << p.drLimHigh;
     }

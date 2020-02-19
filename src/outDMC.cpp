@@ -7,8 +7,7 @@
 
 void printResults(
         Prms &p,
-        std::map<std::string, std::vector<double> > &resSum
-) {
+        std::map<std::string, std::vector<double> > &resSum) {
 
     std::cout << "Results Summary:" << std::endl;
     std::cout << "\trtCor\tsdRtCor\tperErr\trtErr\tsdRtErr" << std::endl;
