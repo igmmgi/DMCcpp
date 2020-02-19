@@ -32,7 +32,12 @@ struct Prms {
 };
 
 void showHelp();
-void processInputArgs(int argc, char** argv, Prms &p, bool &argProblem);
 void printInputArgs(Prms &p);
+void processInputArgs(
+        int argc,
+        char** argv,
+        Prms &p,
+        bool &argProblem
+);
 
 #endif //CPP_INPUTS_HPP

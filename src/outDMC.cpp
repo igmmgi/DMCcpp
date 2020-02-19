@@ -7,9 +7,7 @@
 
 void printResults(
         Prms &p,
-        std::map<std::string, std::vector<double> > &resSum,
-        std::map<std::string, std::vector<double> > &resDelta,
-        std::map<std::string, std::vector<double> > &resCAF
+        std::map<std::string, std::vector<double> > &resSum
 ) {
 
     std::cout << "Results Summary:" << std::endl;
@@ -36,24 +34,24 @@ void printResults(
     std::cout << std::endl;
 
     std::cout << "comp" << "\t";
-    for (unsigned int i = 0; i < resDelta["delta_pct_comp"].size(); i++)
-        std::cout << std::fixed << std::setprecision(1) << resDelta["delta_pct_comp"][i] << "\t";
+    for (unsigned int i = 0; i < resSum["delta_pct_comp"].size(); i++)
+        std::cout << std::fixed << std::setprecision(1) << resSum["delta_pct_comp"][i] << "\t";
     std::cout << std::endl;
 
     std::cout << "incomp" << "\t";
-    for (unsigned int i = 0; i < resDelta["delta_pct_incomp"].size(); i++)
-        std::cout << std::fixed << std::setprecision(1) << resDelta["delta_pct_incomp"][i] << "\t";
+    for (unsigned int i = 0; i < resSum["delta_pct_incomp"].size(); i++)
+        std::cout << std::fixed << std::setprecision(1) << resSum["delta_pct_incomp"][i] << "\t";
     std::cout << std::endl;
 
     std::cout << "mean" << "\t";
-    for (unsigned int i = 0; i < resDelta["delta_pct_mean"].size(); i++)
-        std::cout << std::fixed << std::setprecision(1) << resDelta["delta_pct_mean"][i] << "\t";
+    for (unsigned int i = 0; i < resSum["delta_pct_mean"].size(); i++)
+        std::cout << std::fixed << std::setprecision(1) << resSum["delta_pct_mean"][i] << "\t";
     std::cout << std::endl;
 
     std::cout << "effect" << "\t";
-    for (unsigned int i = 0; i < resDelta["delta_pct_delta"].size(); i++)
+    for (unsigned int i = 0; i < resSum["delta_pct_delta"].size(); i++)
         std::cout << std::fixed << std::setprecision(1) << std::right << std::setw(5)
-                  << resDelta["delta_pct_delta"][i] << "\t";
+                  << resSum["delta_pct_delta"][i] << "\t";
     std::cout << std::endl;
     std::cout << std::endl;
 
@@ -64,14 +62,14 @@ void printResults(
     std::cout << std::endl;
 
     std::cout << "comp" << "\t";
-    for (unsigned int i = 0; i < resCAF["caf_comp"].size(); i++)
+    for (unsigned int i = 0; i < resSum["caf_comp"].size(); i++)
         std::cout << std::fixed << std::setprecision(3) << std::right << std::setw(7)
-                  << resCAF["caf_comp"][i] << "\t";
+                  << resSum["caf_comp"][i] << "\t";
     std::cout << std::endl;
     std::cout << "incomp" << "\t";
-    for (unsigned int i = 0; i < resCAF["caf_incomp"].size(); i++)
+    for (unsigned int i = 0; i < resSum["caf_incomp"].size(); i++)
         std::cout << std::fixed << std::setprecision(3) << std::right << std::setw(7)
-                  << resCAF["caf_incomp"][i] << "\t";
+                  << resSum["caf_incomp"][i] << "\t";
     std::cout << std::endl;
 
 }
