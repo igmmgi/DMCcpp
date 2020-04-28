@@ -2,7 +2,7 @@
 #include <getopt.h>
 #include "inDMC.h"
 
-void showHelp() {
+void show_help() {
     std::cout << "DMC model simulation\n"
                  "Ulrich, R., Schröter, H., Leuthold, H., & Birngruber, T. (2015).\n"
                  "Automatic and controlled stimulus processing in conflict tasks: Superimposed\n"
@@ -41,7 +41,7 @@ void showHelp() {
                  "./dmcSim --varSP 1 // Results from Figure 7" << std::endl;
 }
 
-void processInputArgs(int argc, char **argv, Prms &p, bool &argProblem) {
+void process_input_args(int argc, char **argv, Prms &p, bool &argProblem) {
 
     const struct option long_opts[] = {
             {"amp",            1, nullptr, 0},
@@ -150,7 +150,7 @@ void processInputArgs(int argc, char **argv, Prms &p, bool &argProblem) {
                     p.setSeed = static_cast<bool>(std::stoi(optarg));
                     break;
                 case 24:
-                    showHelp();
+                    show_help();
                     argProblem = true;
                     break;
                 default:
@@ -164,7 +164,7 @@ void processInputArgs(int argc, char **argv, Prms &p, bool &argProblem) {
     }
 }
 
-void printInputArgs(Prms &p) {
+void print_input_args(Prms &p) {
     std::cout << "\nDMC Parameters:" << "\n";
     std::cout << "amp: " << p.amp << "\n";
     std::cout << "tau: " << p.tau << "\n";
@@ -173,18 +173,8 @@ void printInputArgs(Prms &p) {
     std::cout << "bnds: " << p.bnds << "\n";
     std::cout << "resMean: " << p.resMean << "\n";
     std::cout << "resSD: " << p.resSD << "\n";
-    // std::cout << "nTrl: " << p.nTrl << "\n";
-    // std::cout << "tmax: " << p.tmax << "\n";
-    if (p.varSP) {
-        // std::cout << "varSP: " << p.varSP << "\n";
-        std::cout << "spShape: " << p.spShape << "\n";
-        std::cout << "spLims: " << p.spLimLow << " to " << p.spLimHigh << "\n";
-    }
-    if (p.varDR) {
-        // std::cout << "varDR: " << p.varDR << "\n";
-        std::cout << "drShape: " << p.drShape << "\n";
-        std::cout << "drLims: " << p.drLimLow << " to " << p.drLimHigh;
-    }
+    if (p.varSP)  std::cout << "spShape: " << p.spShape << "\n"; 
+    if (p.varDR)  std::cout << "drShape: " << p.drShape << "\n"; 
     std::cout << std::endl;
 }
 

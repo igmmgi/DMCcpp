@@ -9,18 +9,18 @@ int main(int argc, char *argv[]) {
 
     Prms p;
     bool argProb = false;
-    processInputArgs(argc, argv, p, argProb);
+    process_input_args(argc, argv, p, argProb);
 
     if (argProb) return 0;
-    if (p.printInputArgs) printInputArgs(p);
+    if (p.printInputArgs) print_input_args(p);
 
-    std::map<std::string, std::vector<double>> resSum;
-    std::map<std::string, std::vector<double>> sim;
+    std::map<std::string, std::vector<double>> rsum;
+    std::map<std::string, std::vector<double>> rsim;
     std::map<std::string, std::vector<std::vector<double>>> trials;
 
-    runDMCsim(p, resSum, sim, trials);
+    run_dmc_sim(p, rsum, rsim, trials);
 
-    if (p.printResults) printResults(p, resSum);
+    if (p.printResults) print_results(p, rsum);
 
     return 0;
 

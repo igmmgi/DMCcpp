@@ -31,9 +31,9 @@ struct Prms {
 
 };
 
-void showHelp();
-void printInputArgs(Prms &p);
-void processInputArgs(
+void show_help();
+void print_input_args(Prms &p);
+void process_input_args(
         int argc,
         char** argv,
         Prms &p,
