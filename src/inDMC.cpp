@@ -29,8 +29,8 @@ void show_help() {
                  "drLimHigh: higher limit of drift rate point distribution\n"
                  "fullData: option to return all data required for plots when used within Rcpp\n"
                  "nTrlData: option to plot n trials when used within Rcpp\n"
-                 "stepDelta: number of bins for rt distribution analysis\n"
-                 "stepCAF: number of bins for conditional accuracy function analysis\n"
+                 "nDelta: number of bins for rt distribution analysis\n"
+                 "nCAF: number of bins for conditional accuracy function analysis\n"
                  "printInputArgs: 0/1 print input arguments to console\n"
                  "printResults: 0/1 print results summary to console\n\n"
                  "Examples:\n"
@@ -63,8 +63,8 @@ void process_input_args(int argc, char **argv, Prms &p, bool &argProblem) {
             {"drShape",        1, nullptr, 16},
             {"fullData",       1, nullptr, 17},  // when used from within Rcpp
             {"nTrlData",       1, nullptr, 18},  // when used from within Rcpp to plot individual trials (lower left plot)
-            {"stepDelta",      1, nullptr, 19},
-            {"stepCAF",        1, nullptr, 20},
+            {"nDelta",         1, nullptr, 19},
+            {"nCAF",           1, nullptr, 20},
             {"printInputArgs", 1, nullptr, 21},
             {"printResults",   1, nullptr, 22},
             {"setSeed",        1, nullptr, 23},
@@ -135,10 +135,10 @@ void process_input_args(int argc, char **argv, Prms &p, bool &argProblem) {
                     p.nTrlData = static_cast<unsigned long>(std::stoi(optarg));
                     break;
                 case 19:
-                    p.stepDelta = std::stoi(optarg);
+                    p.nDelta = std::stoi(optarg);
                     break;
                 case 20:
-                    p.stepCAF = std::stoi(optarg);
+                    p.nCAF = std::stoi(optarg);
                     break;
                 case 21:
                     p.printInputArgs = static_cast<bool>(std::stoi(optarg));

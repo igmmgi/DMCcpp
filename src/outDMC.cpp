@@ -2,17 +2,16 @@
 #include <iomanip>
 #include <vector>
 #include <map>
-#include <cmath>
-#include "inDMC.h"
+#include "runDMC.h"
 
 void print_results(
         Prms &p,
         std::map<std::string, std::vector<double> > &resSum) {
    
-    std::cout << "Results Summary:" << std::endl;
-    std::cout << "\trtCor\tsdRtCor\tperErr\trtErr\tsdRtErr" << std::endl;
+    std::cout << "Results Summary:" << "\n";
+    std::cout << "\trtCor\tsdRtCor\tperErr\trtErr\tsdRtErr" << "\n";
     std::cout << "comp\t"
-        << std::fixed
+        << std::fixed 
         << std::setprecision(0) << resSum["resSum_comp"][0] << "\t"
         << std::setprecision(0) << resSum["resSum_comp"][1] << "\t"
         << std::setprecision(2) << resSum["resSum_comp"][2] << "\t"
@@ -24,49 +23,51 @@ void print_results(
         << std::setprecision(0) << resSum["resSum_incomp"][1] << "\t"
         << std::setprecision(2) << resSum["resSum_incomp"][2] << "\t"
         << std::setprecision(0) << resSum["resSum_incomp"][3] << "\t"
-        << std::setprecision(0) << resSum["resSum_incomp"][4] << "\n";
-    std::cout << std::endl;
+        << std::setprecision(0) << resSum["resSum_incomp"][4] << "\n\n";
 
     // results delta distribution
     std::cout << "Delta Values:\n" << "\t";
-    for (auto step = p.stepDelta; step < 100; step += p.stepDelta)
-        std::cout << step << "%\t";
-    std::cout << std::endl;
-    
+    for (int i = 1; i <= p.nDelta; i++)
+        std::cout << p.vDelta[i] << "%\t";
+    std::cout << "\n";
+
     std::cout << "comp" << "\t" << std::fixed << std::setprecision(1);
-    for (unsigned int i = 0; i < resSum["delta_pct_comp"].size(); i++)
+    for (int i = 0; i < p.nDelta; i++)
         std::cout << resSum["delta_pct_comp"][i] << "\t";
-    std::cout << std::endl;
+    std::cout << "\n";
 
     std::cout << "incomp" << "\t" << std::fixed << std::setprecision(1);
-    for (unsigned int i = 0; i < resSum["delta_pct_incomp"].size(); i++)
+    for (int i = 0; i < p.nDelta; i++)
         std::cout << resSum["delta_pct_incomp"][i] << "\t";
-    std::cout << std::endl;
+    std::cout << "\n";
 
     std::cout << "mean" << "\t" << std::fixed << std::setprecision(1);  
-    for (unsigned int i = 0; i < resSum["delta_pct_mean"].size(); i++)
+    for (int i = 0; i < p.nDelta; i++)
         std::cout << resSum["delta_pct_mean"][i] << "\t";
-    std::cout << std::endl;
+    std::cout << "\n";
 
     std::cout << "effect" << "\t" << std::fixed << std::setprecision(1); 
-    for (unsigned int i = 0; i < resSum["delta_pct_delta"].size(); i++)
-        std::cout << std::setw(5) << resSum["delta_pct_delta"][i] << "\t";
-    std::cout << std::endl;
-    std::cout << std::endl;
+    std::setw(5);
+    for (int i = 0; i < p.nDelta; i++)
+        std::cout << resSum["delta_pct_delta"][i] << "\t";
+    std::cout << "\n\n";
 
     // results caf
     std::cout << "CAF Values:\n" << "\t"; 
-    for (auto step = 0; step < 100; step += p.stepCAF)
-        std::cout << std::setw(3) << step << "-" << (step + p.stepCAF) << "%\t";
-    std::cout << std::endl;
+    std::setw(3);
+    for (int i = 0; i < p.nCAF; i++)
+        std::cout << static_cast<int>(p.vCAF[i]) << "-" << static_cast<int>(p.vCAF[i+1]) << "%\t";
+    std::cout << "\n";
 
-    std::cout << "comp" << "\t" << std::fixed << std::setprecision(3); 
-    for (unsigned int i = 0; i < resSum["caf_comp"].size(); i++)
-        std::cout << std::setw(7) << resSum["caf_comp"][i] << "\t";
-    std::cout << std::endl;
+    std::cout << "comp" << "\t" << std::fixed << std::setprecision(3);
+    std::setw(7);
+    for (int i = 0; i < p.nCAF; i++)
+        std::cout << resSum["caf_comp"][i] << "\t";
+    std::cout << "\n";
     std::cout << "incomp" << "\t" << std::fixed << std::setprecision(3); 
-    for (unsigned int i = 0; i < resSum["caf_incomp"].size(); i++)
-        std::cout << std::setw(7) << resSum["caf_incomp"][i] << "\t";
+    std::setw(7);
+    for (int i = 0; i < p.nCAF; i++)
+        std::cout << resSum["caf_incomp"][i] << "\t";
     std::cout << std::endl;
 
 }

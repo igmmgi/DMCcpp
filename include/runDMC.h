@@ -26,7 +26,7 @@ std::vector<double> calculate_summary(
 );
 
 std::vector<double> calculate_percentile(
-        int nDelta,
+        std::vector<double> vDelta,
         std::vector<double> &rts
 );
 
@@ -52,6 +52,8 @@ std::vector<double> calculate_caf(
         std::vector<double> &errs,
         int nBins
 );
+
+std::vector<double> linspace(int start, int end, int n);
 
 void run_simulation(
         Prms &p,
