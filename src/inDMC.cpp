@@ -30,6 +30,7 @@ void show_help() {
                  "fullData: option to return all data required for plots when used within Rcpp\n"
                  "nTrlData: option to plot n trials when used within Rcpp\n"
                  "nDelta: number of bins for rt distribution analysis\n"
+                 "pDelta: alternative to nDelta, giving specific percentile values\n"
                  "nCAF: number of bins for conditional accuracy function analysis\n"
                  "printInputArgs: 0/1 print input arguments to console\n"
                  "printResults: 0/1 print results summary to console\n\n"
@@ -64,11 +65,11 @@ void process_input_args(int argc, char **argv, Prms &p, bool &argProblem) {
             {"fullData",       1, nullptr, 17},  // when used from within Rcpp
             {"nTrlData",       1, nullptr, 18},  // when used from within Rcpp to plot individual trials (lower left plot)
             {"nDelta",         1, nullptr, 19},
-            {"nCAF",           1, nullptr, 20},
-            {"printInputArgs", 1, nullptr, 21},
-            {"printResults",   1, nullptr, 22},
-            {"setSeed",        1, nullptr, 23},
-            {"pDelta",         1, nullptr, 24},
+            {"pDelta",         1, nullptr, 20},
+            {"nCAF",           1, nullptr, 21},
+            {"printInputArgs", 1, nullptr, 22},
+            {"printResults",   1, nullptr, 23},
+            {"setSeed",        1, nullptr, 24},
             {"help",           0, nullptr, 25},
             {nullptr,          0, nullptr, 0},
     };
@@ -139,20 +140,20 @@ void process_input_args(int argc, char **argv, Prms &p, bool &argProblem) {
                     p.nDelta = std::stoi(optarg);
                     break;
                 case 20:
-                    p.nCAF = std::stoi(optarg);
-                    break;
-                case 21:
-                    p.printInputArgs = static_cast<bool>(std::stoi(optarg));
-                    break;
-                case 22:
-                    p.printResults = static_cast<bool>(std::stoi(optarg));
-                    break;
-                case 23:
-                    p.setSeed = static_cast<bool>(std::stoi(optarg));
-                    break;
-                case 24:
                     p.pDelta.push_back(std::stoi(optarg));
                     p.nDelta = p.pDelta.size();
+                    break;
+                case 21:
+                    p.nCAF = std::stoi(optarg);
+                    break;
+                case 22:
+                    p.printInputArgs = static_cast<bool>(std::stoi(optarg));
+                    break;
+                case 23:
+                    p.printResults = static_cast<bool>(std::stoi(optarg));
+                    break;
+                case 24:
+                    p.setSeed = static_cast<bool>(std::stoi(optarg));
                     break;
                 case 25:
                     show_help();
