@@ -14,7 +14,13 @@ void run_dmc_sim(
         std::map<std::string, std::vector<std::vector<double>>> &trials) {
 
     // values for delta/CAF
-    p.vDelta = linspace(0, 100, p.nDelta + 2);
+    if (!p.pDelta.empty()) {
+        p.vDelta = p.pDelta;  // take specific values
+        p.vDelta.insert(p.vDelta.begin(), 0);  
+        p.vDelta.push_back(100);  
+    } else {  // equally spaced range of values
+        p.vDelta = linspace(0, 100, p.nDelta + 2);
+    }
     p.vCAF = linspace(0, 100, p.nCAF + 1);
     
     // equation 4
@@ -207,7 +213,6 @@ std::vector<double> calculate_percentile(
         std::vector<double> vDelta,
         std::vector<double> &rts) {
 
-   
     int nDelta = vDelta.size() - 2;
     double pct_idx;
     int pct_idx_int;
@@ -215,9 +220,9 @@ std::vector<double> calculate_percentile(
     std::vector<double> res;
    
     std::sort(rts.begin(), rts.end());
-    
+
     for (int i = 1; i <= nDelta; i++) {
-        pct_idx = (vDelta[i] / 100.0) * rts.size();
+        pct_idx = (vDelta[i] / 100.0) * (rts.size() - 1);
         pct_idx_int = int(pct_idx);
         pct_idx_dec = pct_idx - static_cast<double>(pct_idx_int);
         res.push_back(rts[pct_idx_int] + ((rts[pct_idx_int + 1] - rts[pct_idx_int]) * pct_idx_dec));

@@ -68,7 +68,8 @@ void process_input_args(int argc, char **argv, Prms &p, bool &argProblem) {
             {"printInputArgs", 1, nullptr, 21},
             {"printResults",   1, nullptr, 22},
             {"setSeed",        1, nullptr, 23},
-            {"help",           0, nullptr, 24},
+            {"pDelta",         1, nullptr, 24},
+            {"help",           0, nullptr, 25},
             {nullptr,          0, nullptr, 0},
     };
 
@@ -150,6 +151,10 @@ void process_input_args(int argc, char **argv, Prms &p, bool &argProblem) {
                     p.setSeed = static_cast<bool>(std::stoi(optarg));
                     break;
                 case 24:
+                    p.pDelta.push_back(std::stoi(optarg));
+                    p.nDelta = p.pDelta.size();
+                    break;
+                case 25:
                     show_help();
                     argProblem = true;
                     break;
