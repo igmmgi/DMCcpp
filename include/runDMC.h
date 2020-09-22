@@ -59,7 +59,7 @@ void run_simulation(
         Prms &p,
         std::vector<double> &activation_sum,
         std::vector<std::vector<double>> &trial_matrix,
-        std::vector<double> &mu_vec,
+        std::vector<double> &u_vec,
         std::vector<double> &sp,
         std::vector<double> &dr,
         std::vector<double> &rts,
@@ -69,7 +69,7 @@ void run_simulation(
 
 void run_simulation(
         Prms &p,
-        std::vector<double> &mu_vec,
+        std::vector<double> &u_vec,
         std::vector<double> &sp,
         std::vector<double> &dr,
         std::vector<double> &rts,
