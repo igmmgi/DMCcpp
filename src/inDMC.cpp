@@ -1,5 +1,6 @@
 #include <iostream>
 #include <getopt.h>
+#include <string.h>
 #include "inDMC.h"
 
 void show_help() {
@@ -30,7 +31,7 @@ void show_help() {
                  "fullData: option to return all data required for plots when used within Rcpp\n"
                  "nTrlData: option to plot n trials when used within Rcpp\n"
                  "nDelta: number of bins for rt distribution analysis\n"
-                 "pDelta: alternative to nDelta, giving specific percentile values\n"
+                 "pDelta: alternative to nDelta, giving specific percentile values (enter as --pDelta 25,50,75)\n"
                  "nCAF: number of bins for conditional accuracy function analysis\n"
                  "printInputArgs: 0/1 print input arguments to console\n"
                  "printResults: 0/1 print results summary to console\n\n"
@@ -140,9 +141,21 @@ void process_input_args(int argc, char **argv, Prms &p, bool &argProblem) {
                     p.nDelta = std::stoi(optarg);
                     break;
                 case 20:
-                    p.pDelta.push_back(std::stoi(optarg));
-                    p.nDelta = p.pDelta.size();
-                    break;
+                    {
+                        char* token = strtok(optarg, ",");
+                        int pval;
+                        while (token != NULL) {
+                            pval = std::stoi(token);
+                            if (pval >= 0 && pval <= 100) {
+                                p.pDelta.push_back(pval);
+                            } else {
+                                std::cout << "Requested percentile problem: 0 <= " << pval << " <= 100 " << "\n";
+                            }
+                            token = strtok(NULL, ",");
+                        }
+                        p.nDelta = p.pDelta.size();
+                        break;
+                    }
                 case 21:
                     p.nCAF = std::stoi(optarg);
                     break;
