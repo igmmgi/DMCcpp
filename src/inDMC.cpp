@@ -12,7 +12,7 @@ void show_help() {
                  "amp: amplitude of automatic activation\n"
                  "tau: time to peak of automatic activation\n"
                  "aaShape: shape parameter of automatic activation\n"
-                 "mu: drift rate of controlled processes\n"
+                 "drc: drift rate of controlled processes\n"
                  "bnds: +- response barrier\n"
                  "resMean: mean of non-decisional component\n"
                  "resSD: standard deviation of non-decisional component\n"
@@ -48,7 +48,7 @@ void process_input_args(int argc, char **argv, Prms &p, bool &argProblem) {
             {"amp",            1, nullptr, 0},
             {"tau",            1, nullptr, 1},
             {"aaShape",        1, nullptr, 2},
-            {"mu",             1, nullptr, 3},
+            {"drc",            1, nullptr, 3},
             {"bnds",           1, nullptr, 4},
             {"resMean",        1, nullptr, 5},
             {"resSD",          1, nullptr, 6},
@@ -89,7 +89,7 @@ void process_input_args(int argc, char **argv, Prms &p, bool &argProblem) {
                     p.aaShape = std::stod(optarg);
                     break;
                 case 3:
-                    p.mu = std::stod(optarg);
+                    p.drc = std::stod(optarg);
                     break;
                 case 4:
                     p.bnds = std::stoi(optarg);
@@ -175,7 +175,7 @@ void print_input_args(Prms &p) {
     std::cout << "amp: " << p.amp << "\n";
     std::cout << "tau: " << p.tau << "\n";
     std::cout << "aaShape: " << p.aaShape << "\n";
-    std::cout << "mu: " << p.mu << "\n";
+    std::cout << "drc: " << p.drc << "\n";
     std::cout << "bnds: " << p.bnds << "\n";
     std::cout << "resMean: " << p.resMean << "\n";
     std::cout << "resSD: " << p.resSD << "\n";
