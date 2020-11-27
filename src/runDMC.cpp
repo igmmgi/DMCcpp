@@ -215,12 +215,15 @@ std::vector<double> calculate_summary(
 
     // rtCor, sdRtCor, perErr, rtErr, sdRtErr
     std::vector<double> res(6);
-    res[0] = accumulate(rts.begin(), rts.end(), 0.0) / rts.size();
-    res[1] = std::sqrt(std::inner_product(rts.begin(), rts.end(), rts.begin(), 0.0) / rts.size() - res[0] * res[0]);
+    if (rts.size() > 0) {
+        res[0] = accumulate(rts.begin(), rts.end(), 0.0) / rts.size();
+        res[1] = std::sqrt(std::inner_product(rts.begin(), rts.end(), rts.begin(), 0.0) / rts.size() - res[0] * res[0]);
+    }
     res[2] = (errs.size() / static_cast<double>(nTrl)) * 100;
-    res[3] = accumulate(errs.begin(), errs.end(), 0.0) / errs.size();
-    res[4] = std::sqrt(std::inner_product(errs.begin(), errs.end(), errs.begin(), 0.0) / errs.size() - res[3] * res[3]);
-
+    if (errs.size() > 0) {
+        res[3] = accumulate(errs.begin(), errs.end(), 0.0) / errs.size();
+        res[4] = std::sqrt(std::inner_product(errs.begin(), errs.end(), errs.begin(), 0.0) / errs.size() - res[3] * res[3]);
+    }
     res[5] = (slows.size() / static_cast<double>(nTrl)) * 100;
 
     return res;
@@ -232,11 +235,18 @@ std::vector<double> calculate_percentile(
         std::vector<double> vDelta,
         std::vector<double> &rts) {
 
+    std::vector<double> res;
     int nDelta = vDelta.size() - 2;
+    if (rts.size() == 0) {
+        for (int i = 1; i <= nDelta; i++) {
+            res.push_back(0);
+        }
+        return res;
+    }
+
     double pct_idx;
     int pct_idx_int;
     double pct_idx_dec;
-    std::vector<double> res;
 
     std::sort(rts.begin(), rts.end());
 
@@ -263,6 +273,14 @@ std::vector<double> calculate_caf(
         std::vector<double> &errs,
         int nCAF) {
 
+    std::vector<double> res;
+    if (rts.size() == 0 || errs.size() == 0) {
+        for (int i = 1; i <= nCAF; i++) {
+            res.push_back(0);
+        }
+        return res;
+    }
+
     std::vector<std::pair<double, bool> > comb;
     comb.reserve(rts.size() + errs.size());
     for (double &rt : rts) comb.emplace_back(std::make_pair(rt, false));
@@ -276,7 +294,6 @@ std::vector<double> calculate_caf(
     std::vector<long int> countCor(nCAF, 0);
     for (auto i = 0u; i < bins.size(); i++) (comb[i].second == 0) ? countCor[bins[i]]++ : countErr[bins[i]]++;
 
-    std::vector<double> res;
     for (auto i = 0u; i < countCor.size(); i++) res.push_back(1 - (countErr[i] / float(countCor[i] + countErr[i])));
 
     return res;
