@@ -13,7 +13,7 @@ struct Prms {
     double bnds = 75;
     double resMean = 300;
     double resSD = 30;
-    unsigned int resMax = 5000;
+    unsigned int rtMax = 5000;
     unsigned long nTrl = 100000;
     unsigned int tmax = 1000;
     bool varSP = false;
@@ -33,7 +33,7 @@ struct Prms {
     bool printInputArgs = true;
     bool printResults = true;
     bool setSeed = false; // if true, use RNGType rng(1) called
-    std::vector<double> pDelta; 
+    std::vector<double> pDelta;
 
 };
 

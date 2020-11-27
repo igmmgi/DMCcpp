@@ -140,11 +140,11 @@ void run_simulation(
             activation_trial += (u_vec[i] + dr[trl] + (p.sigma * snd(rng)));
             if (activation_trial > p.bnds) {
                 value = i + nd_mean_sd(rng) + 1;
-                (value < p.resMax ? rts : slows).push_back(value);
+                (value < p.rtMax ? rts : slows).push_back(value);
                 break;
             } else if (activation_trial < -p.bnds) {
                 value = i + nd_mean_sd(rng) + 1;
-                (value < p.resMax ? errs : slows).push_back(value);
+                (value < p.rtMax ? errs : slows).push_back(value);
                 break;
             }
         }
@@ -191,11 +191,11 @@ void run_simulation(
             activation_trial += u_vec[i] + dr[trl] + (p.sigma * snd(rng));
             if (!criterion && activation_trial > p.bnds) {
                 value = i + nd_mean_sd(rng) + 1;
-                (value < p.resMax ? rts : slows).push_back(value);
+                (value < p.rtMax ? rts : slows).push_back(value);
                 criterion = true;
             } else if (!criterion && activation_trial < -p.bnds) {
                 value = i + nd_mean_sd(rng) + 1;
-                (value < p.resMax ? errs : slows).push_back(value);
+                (value < p.rtMax ? errs : slows).push_back(value);
                 criterion = true;
             }
             if (trl < p.nTrlData) trial_matrix[trl][i] = activation_trial;

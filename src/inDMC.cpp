@@ -17,7 +17,7 @@ void show_help() {
                  "bnds: +- response barrier\n"
                  "resMean: mean of non-decisional component\n"
                  "resSD: standard deviation of non-decisional component\n"
-                 "resMax: limit on simulated RT (decision + non-decisional component)\n"
+                 "rtMax: limit on simulated RT (decision + non-decisional component)\n"
                  "nTrl: number of trials to simulate\n"
                  "tmax: the number of timepoints per trial\n"
                  "varSP: variable start point\n"
@@ -54,7 +54,7 @@ void process_input_args(int argc, char **argv, Prms &p, bool &argProblem) {
             {"bnds",           1, nullptr, 4},
             {"resMean",        1, nullptr, 5},
             {"resSD",          1, nullptr, 6},
-            {"resMax",         1, nullptr, 7},
+            {"rtMax",          1, nullptr, 7},
             {"nTrl",           1, nullptr, 8},
             {"tmax",           1, nullptr, 9},
             {"varSP",          1, nullptr, 10},
@@ -104,7 +104,7 @@ void process_input_args(int argc, char **argv, Prms &p, bool &argProblem) {
                     p.resSD = std::stod(optarg);
                     break;
                 case 7:
-                    p.resMax = std::stod(optarg);
+                    p.rtMax = std::stod(optarg);
                     break;
                 case 8:
                     p.nTrl = std::stoul(optarg);
@@ -197,8 +197,7 @@ void print_input_args(Prms &p) {
     std::cout << "bnds: " << p.bnds << "\n";
     std::cout << "resMean: " << p.resMean << "\n";
     std::cout << "resSD: " << p.resSD << "\n";
-    if (p.varSP)  std::cout << "spShape: " << p.spShape << "\n"; 
-    if (p.varDR)  std::cout << "drShape: " << p.drShape << "\n"; 
+    if (p.varSP)  std::cout << "spShape: " << p.spShape << "\n";
+    if (p.varDR)  std::cout << "drShape: " << p.drShape << "\n";
     std::cout << std::endl;
 }
-
