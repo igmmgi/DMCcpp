@@ -22,6 +22,7 @@ void run_dmc_sim_ci(
 std::vector<double> calculate_summary(
         std::vector<double> &rts,
         std::vector<double> &errs,
+        std::vector<double> &slows,
         unsigned long nTrl
 );
 
@@ -64,6 +65,7 @@ void run_simulation(
         std::vector<double> &dr,
         std::vector<double> &rts,
         std::vector<double> &errs,
+        std::vector<double> &slows,
         int sign
 );
 
@@ -74,6 +76,7 @@ void run_simulation(
         std::vector<double> &dr,
         std::vector<double> &rts,
         std::vector<double> &errs,
+        std::vector<double> &slows,
         int sign
 );
 

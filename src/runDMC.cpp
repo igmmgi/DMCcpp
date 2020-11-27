@@ -60,6 +60,7 @@ void run_dmc_sim_ci(
 
     std::vector<double> rts;
     std::vector<double> errs;
+    std::vector<double> slows;
     std::vector<double> activation_sum(p.tmax);
     std::vector<std::vector<double>> trl_mat(p.nTrlData,
                                              std::vector<double>(p.tmax));  // needed if plotting individual trials
@@ -76,19 +77,20 @@ void run_dmc_sim_ci(
 
     // run simulation and store rts for correct/incorrect trials
     if (p.fullData) {
-        run_simulation(p, activation_sum, trl_mat, u_vec, sp, dr, rts, errs, sign);
+        run_simulation(p, activation_sum, trl_mat, u_vec, sp, dr, rts, errs, slows, sign);
         trials[comp] = trl_mat;
     } else {
-        run_simulation(p, u_vec, sp, dr, rts, errs, sign);
+        run_simulation(p, u_vec, sp, dr, rts, errs, slows, sign);
     }
 
     m.lock();
     sim["activation_" + comp] = activation_sum;
     sim["rts_" + comp] = rts;
     sim["errs_" + comp] = errs;
+    sim["slows_" + comp] = errs;
 
     // results summary
-    resSum["resSum_" + comp] = calculate_summary(rts, errs, p.nTrl);
+    resSum["resSum_" + comp] = calculate_summary(rts, errs, slows, p.nTrl);
     resSum["delta_pct_" + comp] = calculate_percentile(p.vDelta, rts);
     resSum["caf_" + comp] = calculate_caf(rts, errs, p.nCAF);
     m.unlock();
@@ -122,6 +124,7 @@ void run_simulation(
         std::vector<double> &dr,
         std::vector<double> &rts,
         std::vector<double> &errs,
+        std::vector<double> &slows,
         int sign) {
 
     const uint32_t s = p.setSeed ? 1 : std::time(nullptr);
@@ -130,12 +133,18 @@ void run_simulation(
     boost::random::normal_distribution<double> nd_mean_sd(p.resMean, p.resSD);
 
     double activation_trial;
+    double value;
     for (auto trl = 0u; trl < p.nTrl; trl++) {
         activation_trial = sp[trl];
         for (auto i = 0u; i < p.tmax; i++) {
             activation_trial += (u_vec[i] + dr[trl] + (p.sigma * snd(rng)));
-            if (fabs(activation_trial) > p.bnds) {
-                (activation_trial > p.bnds ? rts : errs).push_back((i + nd_mean_sd(rng) + 1)); // zero index
+            if (activation_trial > p.bnds) {
+                value = i + nd_mean_sd(rng) + 1;
+                (value < p.resMax ? rts : slows).push_back(value);
+                break;
+            } else if (activation_trial < -p.bnds) {
+                value = i + nd_mean_sd(rng) + 1;
+                (value < p.resMax ? errs : slows).push_back(value);
                 break;
             }
         }
@@ -164,6 +173,7 @@ void run_simulation(
         std::vector<double> &dr,
         std::vector<double> &rts,
         std::vector<double> &errs,
+        std::vector<double> &slows,
         int sign) {
 
     const uint32_t s = p.setSeed ? 1 : std::time(nullptr);
@@ -173,13 +183,19 @@ void run_simulation(
 
     double activation_trial;
     bool criterion;
+    double value;
     for (auto trl = 0u; trl < p.nTrl; trl++) {
         criterion = false;
         activation_trial = sp[trl];
         for (auto i = 0u; i < activation_sum.size(); i++) {
             activation_trial += u_vec[i] + dr[trl] + (p.sigma * snd(rng));
-            if (!criterion && fabs(activation_trial) > p.bnds) {
-                (activation_trial > p.bnds ? rts : errs).push_back(i + nd_mean_sd(rng) + 1); // zero index
+            if (!criterion && activation_trial > p.bnds) {
+                value = i + nd_mean_sd(rng) + 1;
+                (value < p.resMax ? rts : slows).push_back(value);
+                criterion = true;
+            } else if (!criterion && activation_trial < -p.bnds) {
+                value = i + nd_mean_sd(rng) + 1;
+                (value < p.resMax ? errs : slows).push_back(value);
                 criterion = true;
             }
             if (trl < p.nTrlData) trial_matrix[trl][i] = activation_trial;
@@ -194,15 +210,18 @@ void run_simulation(
 std::vector<double> calculate_summary(
         std::vector<double> &rts,
         std::vector<double> &errs,
+        std::vector<double> &slows,
         unsigned long nTrl) {
 
     // rtCor, sdRtCor, perErr, rtErr, sdRtErr
-    std::vector<double> res(5);
+    std::vector<double> res(6);
     res[0] = accumulate(rts.begin(), rts.end(), 0.0) / rts.size();
     res[1] = std::sqrt(std::inner_product(rts.begin(), rts.end(), rts.begin(), 0.0) / rts.size() - res[0] * res[0]);
     res[2] = (errs.size() / static_cast<double>(nTrl)) * 100;
     res[3] = accumulate(errs.begin(), errs.end(), 0.0) / errs.size();
     res[4] = std::sqrt(std::inner_product(errs.begin(), errs.end(), errs.begin(), 0.0) / errs.size() - res[3] * res[3]);
+
+    res[5] = (slows.size() / static_cast<double>(nTrl)) * 100;
 
     return res;
 

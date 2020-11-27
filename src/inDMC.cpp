@@ -17,6 +17,7 @@ void show_help() {
                  "bnds: +- response barrier\n"
                  "resMean: mean of non-decisional component\n"
                  "resSD: standard deviation of non-decisional component\n"
+                 "resMax: limit on simulated RT (decision + non-decisional component)\n"
                  "nTrl: number of trials to simulate\n"
                  "tmax: the number of timepoints per trial\n"
                  "varSP: variable start point\n"
@@ -53,25 +54,26 @@ void process_input_args(int argc, char **argv, Prms &p, bool &argProblem) {
             {"bnds",           1, nullptr, 4},
             {"resMean",        1, nullptr, 5},
             {"resSD",          1, nullptr, 6},
-            {"nTrl",           1, nullptr, 7},
-            {"tmax",           1, nullptr, 8},
-            {"varSP",          1, nullptr, 9},
-            {"spShape",        1, nullptr, 10},
-            {"spLimLow",       1, nullptr, 11},
-            {"spLimHigh",      1, nullptr, 12},
-            {"varDR",          1, nullptr, 13},
-            {"drLimLow",       1, nullptr, 14},
-            {"drLimHigh",      1, nullptr, 15},
-            {"drShape",        1, nullptr, 16},
-            {"fullData",       1, nullptr, 17},  // when used from within Rcpp
-            {"nTrlData",       1, nullptr, 18},  // when used from within Rcpp to plot individual trials (lower left plot)
-            {"nDelta",         1, nullptr, 19},
-            {"pDelta",         1, nullptr, 20},
-            {"nCAF",           1, nullptr, 21},
-            {"printInputArgs", 1, nullptr, 22},
-            {"printResults",   1, nullptr, 23},
-            {"setSeed",        1, nullptr, 24},
-            {"help",           0, nullptr, 25},
+            {"resMax",         1, nullptr, 7},
+            {"nTrl",           1, nullptr, 8},
+            {"tmax",           1, nullptr, 9},
+            {"varSP",          1, nullptr, 10},
+            {"spShape",        1, nullptr, 11},
+            {"spLimLow",       1, nullptr, 12},
+            {"spLimHigh",      1, nullptr, 13},
+            {"varDR",          1, nullptr, 14},
+            {"drLimLow",       1, nullptr, 15},
+            {"drLimHigh",      1, nullptr, 16},
+            {"drShape",        1, nullptr, 17},
+            {"fullData",       1, nullptr, 18},  // when used from within Rcpp
+            {"nTrlData",       1, nullptr, 19},  // when used from within Rcpp to plot individual trials (lower left plot)
+            {"nDelta",         1, nullptr, 20},
+            {"pDelta",         1, nullptr, 21},
+            {"nCAF",           1, nullptr, 22},
+            {"printInputArgs", 1, nullptr, 23},
+            {"printResults",   1, nullptr, 24},
+            {"setSeed",        1, nullptr, 25},
+            {"help",           0, nullptr, 26},
             {nullptr,          0, nullptr, 0},
     };
 
@@ -102,45 +104,48 @@ void process_input_args(int argc, char **argv, Prms &p, bool &argProblem) {
                     p.resSD = std::stod(optarg);
                     break;
                 case 7:
-                    p.nTrl = std::stoul(optarg);
+                    p.resMax = std::stod(optarg);
                     break;
                 case 8:
-                    p.tmax = static_cast<unsigned int>(std::stoi(optarg));
+                    p.nTrl = std::stoul(optarg);
                     break;
                 case 9:
-                    p.varSP = static_cast<bool>(std::stoi(optarg));
+                    p.tmax = static_cast<unsigned int>(std::stoi(optarg));
                     break;
                 case 10:
-                    p.spShape = std::stod(optarg);
+                    p.varSP = static_cast<bool>(std::stoi(optarg));
                     break;
                 case 11:
-                    p.spLimLow = std::stod(optarg);
+                    p.spShape = std::stod(optarg);
                     break;
                 case 12:
-                    p.spLimHigh = std::stod(optarg);
+                    p.spLimLow = std::stod(optarg);
                     break;
                 case 13:
-                    p.varDR = static_cast<bool>(std::stoi(optarg));
+                    p.spLimHigh = std::stod(optarg);
                     break;
                 case 14:
-                    p.drLimLow = std::stod(optarg);
+                    p.varDR = static_cast<bool>(std::stoi(optarg));
                     break;
                 case 15:
-                    p.drLimHigh = std::stod(optarg);
+                    p.drLimLow = std::stod(optarg);
                     break;
                 case 16:
-                    p.drShape = std::stod(optarg);
+                    p.drLimHigh = std::stod(optarg);
                     break;
                 case 17:
-                    p.fullData = static_cast<bool>(std::stoi(optarg));
+                    p.drShape = std::stod(optarg);
                     break;
                 case 18:
-                    p.nTrlData = static_cast<unsigned long>(std::stoi(optarg));
+                    p.fullData = static_cast<bool>(std::stoi(optarg));
                     break;
                 case 19:
-                    p.nDelta = std::stoi(optarg);
+                    p.nTrlData = static_cast<unsigned long>(std::stoi(optarg));
                     break;
                 case 20:
+                    p.nDelta = std::stoi(optarg);
+                    break;
+                case 21:
                     {
                         char* token = strtok(optarg, ",");
                         int pval;
@@ -156,19 +161,19 @@ void process_input_args(int argc, char **argv, Prms &p, bool &argProblem) {
                         p.nDelta = p.pDelta.size();
                         break;
                     }
-                case 21:
+                case 22:
                     p.nCAF = std::stoi(optarg);
                     break;
-                case 22:
+                case 23:
                     p.printInputArgs = static_cast<bool>(std::stoi(optarg));
                     break;
-                case 23:
+                case 24:
                     p.printResults = static_cast<bool>(std::stoi(optarg));
                     break;
-                case 24:
+                case 25:
                     p.setSeed = static_cast<bool>(std::stoi(optarg));
                     break;
-                case 25:
+                case 26:
                     show_help();
                     argProblem = true;
                     break;

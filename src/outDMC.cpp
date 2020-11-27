@@ -7,23 +7,25 @@
 void print_results(
         Prms &p,
         std::map<std::string, std::vector<double> > &resSum) {
-   
+
     std::cout << "Results Summary:" << "\n";
-    std::cout << "\trtCor\tsdRtCor\tperErr\trtErr\tsdRtErr" << "\n";
+    std::cout << "\trtCor\tsdRtCor\tperErr\trtErr\tsdRtErr\tperSlow" << "\n";
     std::cout << "comp\t"
-        << std::fixed 
-        << std::setprecision(0) << resSum["resSum_comp"][0] << "\t"
-        << std::setprecision(0) << resSum["resSum_comp"][1] << "\t"
-        << std::setprecision(2) << resSum["resSum_comp"][2] << "\t"
-        << std::setprecision(0) << resSum["resSum_comp"][3] << "\t"
-        << std::setprecision(0) << resSum["resSum_comp"][4] << "\n";
+              << std::fixed
+              << std::setprecision(0) << resSum["resSum_comp"][0] << "\t"
+              << std::setprecision(0) << resSum["resSum_comp"][1] << "\t"
+              << std::setprecision(2) << resSum["resSum_comp"][2] << "\t"
+              << std::setprecision(0) << resSum["resSum_comp"][3] << "\t"
+              << std::setprecision(0) << resSum["resSum_comp"][4] << "\t"
+              << std::setprecision(0) << resSum["resSum_comp"][5] << "\n";
     std::cout << "incomp\t"
-        << std::fixed
-        << std::setprecision(0) << resSum["resSum_incomp"][0] << "\t"
-        << std::setprecision(0) << resSum["resSum_incomp"][1] << "\t"
-        << std::setprecision(2) << resSum["resSum_incomp"][2] << "\t"
-        << std::setprecision(0) << resSum["resSum_incomp"][3] << "\t"
-        << std::setprecision(0) << resSum["resSum_incomp"][4] << "\n\n";
+              << std::fixed
+              << std::setprecision(0) << resSum["resSum_incomp"][0] << "\t"
+              << std::setprecision(0) << resSum["resSum_incomp"][1] << "\t"
+              << std::setprecision(2) << resSum["resSum_incomp"][2] << "\t"
+              << std::setprecision(0) << resSum["resSum_incomp"][3] << "\t"
+              << std::setprecision(0) << resSum["resSum_incomp"][4] << "\t"
+              << std::setprecision(0) << resSum["resSum_incomp"][5] << "\n\n";
 
     // results delta distribution
     std::cout << "Delta Values:\n" << "\t";
