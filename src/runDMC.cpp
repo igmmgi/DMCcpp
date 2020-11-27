@@ -62,8 +62,7 @@ void run_dmc_sim_ci(
     std::vector<double> errs;
     std::vector<double> slows;
     std::vector<double> activation_sum(p.tmax);
-    std::vector<std::vector<double>> trl_mat(p.nTrlData,
-                                             std::vector<double>(p.tmax));  // needed if plotting individual trials
+    std::vector<std::vector<double>> trl_mat(p.nTrlData, std::vector<double>(p.tmax));  // needed if plotting individual trials
 
     std::vector<double> u_vec(p.tmax);
     for (auto i = 0u; i < u_vec.size(); i++)
@@ -150,17 +149,17 @@ void run_simulation(
         }
     }
 
-    if (p.varSP) {
-        double meanSP = accumulate(sp.begin(), sp.end(), 0.0) / sp.size();
-        double sdSP = std::sqrt( std::inner_product(sp.begin(), sp.end(), sp.begin(), 0.0) / sp.size() - meanSP * meanSP);
-        std::cout << "Mean/SD SP: " << meanSP << "/" << sdSP << std::endl << std::endl;
-    }
+    // if (p.varSP) {
+    //     double meanSP = accumulate(sp.begin(), sp.end(), 0.0) / sp.size();
+    //     double sdSP = std::sqrt( std::inner_product(sp.begin(), sp.end(), sp.begin(), 0.0) / sp.size() - meanSP * meanSP);
+    //     std::cout << "Mean/SD SP: " << meanSP << "/" << sdSP << std::endl << std::endl;
+    // }
 
-    if (p.varDR) {
-        double meanDR = accumulate(dr.begin(), dr.end(), 0.0) / dr.size();
-        double sdDR = std::sqrt( std::inner_product(dr.begin(), dr.end(), dr.begin(), 0.0) / dr.size() - meanDR * meanDR);
-        std::cout << "Mean/SD DR: " << meanDR << "/" << sdDR << std::endl << std::endl;
-    }
+    // if (p.varDR) {
+    //     double meanDR = accumulate(dr.begin(), dr.end(), 0.0) / dr.size();
+    //     double sdDR = std::sqrt( std::inner_product(dr.begin(), dr.end(), dr.begin(), 0.0) / dr.size() - meanDR * meanDR);
+    //     std::cout << "Mean/SD DR: " << meanDR << "/" << sdDR << std::endl << std::endl;
+    // }
 
 }
 
@@ -235,26 +234,23 @@ std::vector<double> calculate_percentile(
         std::vector<double> vDelta,
         std::vector<double> &rts) {
 
-    std::vector<double> res;
     int nDelta = vDelta.size() - 2;
-    if (rts.size() == 0) {
-        for (int i = 1; i <= nDelta; i++) {
-            res.push_back(0);
+    std::vector<double> res(nDelta, 0);
+    if (rts.size() != 0) {
+
+        std::sort(rts.begin(), rts.end());
+
+        double pct_idx;
+        int pct_idx_int;
+        double pct_idx_dec;
+
+        for (int i = 0; i < nDelta; i++) {
+            pct_idx = (vDelta[i] / 100.0) * (rts.size() - 1);
+            pct_idx_int = int(pct_idx);
+            pct_idx_dec = pct_idx - static_cast<double>(pct_idx_int);
+            res[i] = rts[pct_idx_int] + ((rts[pct_idx_int + 1] - rts[pct_idx_int]) * pct_idx_dec);
         }
-        return res;
-    }
 
-    double pct_idx;
-    int pct_idx_int;
-    double pct_idx_dec;
-
-    std::sort(rts.begin(), rts.end());
-
-    for (int i = 1; i <= nDelta; i++) {
-        pct_idx = (vDelta[i] / 100.0) * (rts.size() - 1);
-        pct_idx_int = int(pct_idx);
-        pct_idx_dec = pct_idx - static_cast<double>(pct_idx_int);
-        res.push_back(rts[pct_idx_int] + ((rts[pct_idx_int + 1] - rts[pct_idx_int]) * pct_idx_dec));
     }
 
     return res;
@@ -273,28 +269,26 @@ std::vector<double> calculate_caf(
         std::vector<double> &errs,
         int nCAF) {
 
-    std::vector<double> res;
-    if (rts.size() == 0 || errs.size() == 0) {
-        for (int i = 1; i <= nCAF; i++) {
-            res.push_back(0);
-        }
-        return res;
-    }
+    std::vector<double> res(nCAF, 0);
 
     std::vector<std::pair<double, bool> > comb;
     comb.reserve(rts.size() + errs.size());
-    for (double &rt : rts) comb.emplace_back(std::make_pair(rt, false));
-    for (double &err : errs) comb.emplace_back(std::make_pair(err, true));
 
-    std::sort(comb.begin(), comb.end());
-    std::vector<int> bins(comb.size());
-    for (auto i = 0u; i < comb.size(); i++) bins[i] = int(nCAF * (i) / comb.size());
+    if (comb.size() != 0) {
 
-    std::vector<long int> countErr(nCAF, 0);
-    std::vector<long int> countCor(nCAF, 0);
-    for (auto i = 0u; i < bins.size(); i++) (comb[i].second == 0) ? countCor[bins[i]]++ : countErr[bins[i]]++;
+        for (double &rt : rts) comb.emplace_back(std::make_pair(rt, false));
+        for (double &err : errs) comb.emplace_back(std::make_pair(err, true));
 
-    for (auto i = 0u; i < countCor.size(); i++) res.push_back(1 - (countErr[i] / float(countCor[i] + countErr[i])));
+        std::sort(comb.begin(), comb.end());
+        std::vector<int> bins(comb.size());
+        for (auto i = 0u; i < comb.size(); i++) bins[i] = int(nCAF * (i) / comb.size());
+
+        std::vector<long int> countErr(nCAF, 0);
+        std::vector<long int> countCor(nCAF, 0);
+        for (auto i = 0u; i < bins.size(); i++) (comb[i].second == 0) ? countCor[bins[i]]++ : countErr[bins[i]]++;
+        for (auto i = 0u; i < countCor.size(); i++) res[i] = 1 - (countErr[i] / float(countCor[i] + countErr[i]));
+
+    }
 
     return res;
 
