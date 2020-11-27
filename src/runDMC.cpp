@@ -16,13 +16,13 @@ void run_dmc_sim(
     // values for delta/CAF
     if (!p.pDelta.empty()) {
         p.vDelta = p.pDelta;  // take specific values
-        p.vDelta.insert(p.vDelta.begin(), 0);  
-        p.vDelta.push_back(100);  
+        p.vDelta.insert(p.vDelta.begin(), 0);
+        p.vDelta.push_back(100);
     } else {  // equally spaced range of values
         p.vDelta = linspace(0, 100, p.nDelta + 2);
     }
     p.vCAF = linspace(0, 100, p.nCAF + 1);
-    
+
     // equation 4
     std::vector<double> eq4(p.tmax);
     for (unsigned int i = 1; i <= p.tmax; i++)
@@ -87,7 +87,7 @@ void run_dmc_sim_ci(
     sim["activation_" + comp] = activation_sum;
     sim["rts_" + comp] = rts;
     sim["errs_" + comp] = errs;
-    sim["slows_" + comp] = errs;
+    sim["slows_" + comp] = slows;
 
     // results summary
     resSum["resSum_" + comp] = calculate_summary(rts, errs, slows, p.nTrl);
@@ -237,7 +237,7 @@ std::vector<double> calculate_percentile(
     int pct_idx_int;
     double pct_idx_dec;
     std::vector<double> res;
-   
+
     std::sort(rts.begin(), rts.end());
 
     for (int i = 1; i <= nDelta; i++) {
@@ -293,4 +293,3 @@ std::vector<double> linspace(int start, int end, int n) {
     }
     return out;
 }
-
