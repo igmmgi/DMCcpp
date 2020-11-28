@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iomanip>
 #include <getopt.h>
 #include <string.h>
 #include "inDMC.h"
@@ -190,14 +191,14 @@ void process_input_args(int argc, char **argv, Prms &p, bool &argProblem) {
 
 void print_input_args(Prms &p) {
     std::cout << "\nDMC Parameters:" << "\n";
-    std::cout << "amp: " << p.amp << "\n";
-    std::cout << "tau: " << p.tau << "\n";
-    std::cout << "aaShape: " << p.aaShape << "\n";
-    std::cout << "drc: " << p.drc << "\n";
-    std::cout << "bnds: " << p.bnds << "\n";
-    std::cout << "resMean: " << p.resMean << "\n";
-    std::cout << "resSD: " << p.resSD << "\n";
-    if (p.varSP)  std::cout << "spShape: " << p.spShape << "\n";
-    if (p.varDR)  std::cout << "drShape: " << p.drShape << "\n";
-    std::cout << std::endl;
+    std::cout << "amp: " << p.amp << std::setw(12);
+    std::cout << "tau: " << p.tau << std::setw(12);
+    std::cout << "aaShape: " << p.aaShape << std::setw(12);
+    std::cout << "drc: " << p.drc << std::setw(12);
+    std::cout << "bnds: " << p.bnds << std::setw(12);
+    std::cout << "resMean: " << p.resMean << std::setw(12);
+    std::cout << "resSD: " << p.resSD << std::setw(12);
+    if (p.varSP) std::cout << "spShape: " << p.spShape << std::setw(12);
+    if (p.varDR) std::cout << "drShape: " << p.drShape << std::setw(12);
+    std::cout << "\n\n";
 }
