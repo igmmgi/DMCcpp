@@ -271,10 +271,10 @@ std::vector<double> calculate_caf(
 
     std::vector<double> res(nCAF, 0);
 
-    std::vector<std::pair<double, bool> > comb;
-    comb.reserve(rts.size() + errs.size());
+    if (rts.size() + errs.size() != 0) {
 
-    if (comb.size() != 0) {
+        std::vector<std::pair<double, bool> > comb;
+        comb.reserve(rts.size() + errs.size());
 
         for (double &rt : rts) comb.emplace_back(std::make_pair(rt, false));
         for (double &err : errs) comb.emplace_back(std::make_pair(err, true));
