@@ -245,7 +245,7 @@ std::vector<double> calculate_percentile(
         double pct_idx_dec;
 
         for (int i = 0; i < nDelta; i++) {
-            pct_idx = (vDelta[i] / 100.0) * (rts.size() - 1);
+            pct_idx = (vDelta[i+1] / 100.0) * (rts.size() - 1);
             pct_idx_int = int(pct_idx);
             pct_idx_dec = pct_idx - static_cast<double>(pct_idx_int);
             res[i] = rts[pct_idx_int] + ((rts[pct_idx_int + 1] - rts[pct_idx_int]) * pct_idx_dec);
