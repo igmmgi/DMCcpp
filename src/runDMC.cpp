@@ -30,7 +30,7 @@ void run_dmc_sim(
     sim["eq4"] = eq4;
 
     // run comp and incomp
-    std::vector<std::thread> threads(2);
+    std::vector<std::thread> threads;
     std::vector<std::string> compatibility{"comp", "incomp"};
     std::vector<int> sign{1, -1};
     for (int i = 0; i < 2; i++) {
