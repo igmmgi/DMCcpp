@@ -123,6 +123,7 @@ void run_simulation(
 
     double activation_trial;
     double value;
+
     for (auto trl = 0u; trl < p.nTrl; trl++) {
         activation_trial = sp[trl];
         for (auto i = 0u; i < p.tmax; i++) {
@@ -176,7 +177,7 @@ void run_simulation(
     for (auto trl = 0u; trl < p.nTrl; trl++) {
         criterion = false;
         activation_trial = sp[trl];
-        for (auto i = 0u; i < activation_sum.size(); i++) {
+        for (auto i = 0u; i < p.tmax; i++) {
             activation_trial += u_vec[i] + dr[trl] + (p.sigma * snd(rng));
             if (!criterion && activation_trial > p.bnds) {
                 value = i + nd_mean_sd(rng) + 1;
