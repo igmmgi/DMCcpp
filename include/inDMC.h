@@ -1,6 +1,5 @@
 #ifndef CPP_INPUTS_HPP
 #define CPP_INPUTS_HPP
-#include <chrono>
 #include <vector>
 
 
@@ -45,5 +44,7 @@ void process_input_args(
         Prms &p,
         bool &argProblem
 );
+
+std::vector<double> linspace(int start, int end, int n);
 
 #endif //CPP_INPUTS_HPP

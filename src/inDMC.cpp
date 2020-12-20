@@ -2,7 +2,7 @@
 #include <iomanip>
 #include <getopt.h>
 #include <string.h>
-#include "inDMC.h"
+#include "../include/inDMC.h"
 
 void show_help() {
     std::cout << "DMC model simulation\n"
@@ -187,6 +187,17 @@ void process_input_args(int argc, char **argv, Prms &p, bool &argProblem) {
         std::cout << "Input option not recognized:" << long_opts[idxOption].name << ":" << optarg << std::endl;
         argProblem = true;
     }
+
+    // values for delta/CAF
+    if (!p.pDelta.empty()) {
+        p.vDelta = p.pDelta;  // take specific values
+        p.vDelta.insert(p.vDelta.begin(), 0);
+        p.vDelta.push_back(100);
+    } else {  // equally spaced range of values
+        p.vDelta = linspace(0, 100, p.nDelta + 2);
+    }
+    p.vCAF = linspace(0, 100, p.nCAF + 1);
+
 }
 
 void print_input_args(Prms &p) {
@@ -201,4 +212,16 @@ void print_input_args(Prms &p) {
     if (p.varSP) std::cout << "spShape: " << p.spShape << std::setw(12);
     if (p.varDR) std::cout << "drShape: " << p.drShape << std::setw(12);
     std::cout << "\n\n";
+}
+
+
+std::vector<double> linspace(int start, int end, int n) {
+    double step = (end - start) / double(n-1);
+    std::vector<double> out(n);
+    double val = start;
+    for (int i = 0; i < n; i++) {
+        out[i] = val;
+        val += step;
+    }
+    return out;
 }

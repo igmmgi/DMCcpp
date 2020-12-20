@@ -3,7 +3,7 @@
 #include <boost/random.hpp>
 #include <thread>
 #include <mutex>
-#include "runDMC.h"
+#include "../include/runDMC.h"
 
 std::mutex m;
 
@@ -13,18 +13,8 @@ void run_dmc_sim(
         std::map<std::string, std::vector<double>> &sim,
         std::map<std::string, std::vector<std::vector<double>>> &trials) {
 
-    // values for delta/CAF
-    if (!p.pDelta.empty()) {
-        p.vDelta = p.pDelta;  // take specific values
-        p.vDelta.insert(p.vDelta.begin(), 0);
-        p.vDelta.push_back(100);
-    } else {  // equally spaced range of values
-        p.vDelta = linspace(0, 100, p.nDelta + 2);
-    }
-    p.vCAF = linspace(0, 100, p.nCAF + 1);
-
     // equation 4
-    std::vector<double> eq4(p.tmax);
+    std::vector<double> eq4(p.tmax, 0.0);
     for (unsigned int i = 1; i <= p.tmax; i++)
         eq4[i - 1] = (p.amp * exp(-(i / p.tau))) * pow(((exp(1) * i / (p.aaShape - 1) / p.tau)), (p.aaShape - 1));
     sim["eq4"] = eq4;
@@ -292,15 +282,4 @@ std::vector<double> calculate_caf(
 
     return res;
 
-}
-
-std::vector<double> linspace(int start, int end, int n) {
-    double step = (end - start) / double(n-1);
-    std::vector<double> out(n);
-    double val = start;
-    for (int i = 0; i < n; i++) {
-        out[i] = val;
-        val += step;
-    }
-    return out;
 }

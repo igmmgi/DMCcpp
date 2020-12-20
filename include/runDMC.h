@@ -54,8 +54,6 @@ std::vector<double> calculate_caf(
         int nBins
 );
 
-std::vector<double> linspace(int start, int end, int n);
-
 void run_simulation(
         Prms &p,
         std::vector<double> &activation_sum,
