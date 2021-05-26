@@ -34,7 +34,7 @@ std::vector<double> calculate_percentile(
 void calculate_delta(
         std::map<std::string,
         std::vector<double>> &resDelta
-);
+        );
 
 void variable_drift_rate(
         Prms &p,

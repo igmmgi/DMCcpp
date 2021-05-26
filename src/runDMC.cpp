@@ -106,6 +106,22 @@ void variable_starting_point(Prms &p, std::vector<double> &sp, int sign) {
 
 }
 
+void residual_rt(Prms &p, std::vector<double> &residual_distribution) {
+
+    const uint32_t s = p.setSeed ? 1 : std::time(nullptr);
+    boost::random::mt19937_64 rng(s + 1);
+    if (p.resDist == 1) {
+        // Standard normal distribution with mean + sd (NB make sure no -ve)
+        boost::random::normal_distribution<double> dist(p.resMean, p.resSD);
+        for (auto &i : residual_distribution) i = std::max(0.0, dist(rng));
+    } else if (p.resDist == 2) {
+        // Standard uniform distribution with min/max
+        boost::random::uniform_real_distribution<double> dist(p.resMin, p.resMax);
+        for (auto &i : residual_distribution) i = dist(rng);
+    }
+
+}
+
 void run_simulation(
         Prms &p,
         std::vector<double> &u_vec,
@@ -119,7 +135,10 @@ void run_simulation(
     const uint32_t s = p.setSeed ? 1 : std::time(nullptr);
     boost::random::mt19937_64 rng(s + sign);
     boost::random::normal_distribution<double> snd(0.0, 1.0);
-    boost::random::normal_distribution<double> nd_mean_sd(p.resMean, p.resSD);
+
+    // residual RT distribution
+    std::vector<double> residual_distribution(p.nTrl);
+    residual_rt(p, residual_distribution);
 
     double activation_trial;
     double value;
@@ -129,11 +148,11 @@ void run_simulation(
         for (auto i = 0u; i < p.tmax; i++) {
             activation_trial += (u_vec[i] + dr[trl] + (p.sigma * snd(rng)));
             if (activation_trial > p.bnds) {
-                value = i + nd_mean_sd(rng) + 1;
+                value = i + residual_distribution[trl] + 1;
                 (value < p.rtMax ? rts : slows).push_back(value);
                 break;
             } else if (activation_trial < -p.bnds) {
-                value = i + nd_mean_sd(rng) + 1;
+                value = i + residual_distribution[trl] + 1;
                 (value < p.rtMax ? errs : slows).push_back(value);
                 break;
             }
@@ -169,7 +188,10 @@ void run_simulation(
     const uint32_t s = p.setSeed ? 1 : std::time(nullptr);
     boost::random::mt19937_64 rng(s + sign);
     boost::random::normal_distribution<double> snd(0.0, 1.0);
-    boost::random::normal_distribution<double> nd_mean_sd(p.resMean, p.resSD);
+
+    // residual RT distribution
+    std::vector<double> residual_distribution(p.nTrl);
+    residual_rt(p, residual_distribution);
 
     double activation_trial;
     bool criterion;
@@ -180,11 +202,11 @@ void run_simulation(
         for (auto i = 0u; i < p.tmax; i++) {
             activation_trial += u_vec[i] + dr[trl] + (p.sigma * snd(rng));
             if (!criterion && activation_trial > p.bnds) {
-                value = i + nd_mean_sd(rng) + 1;
+                value = i + residual_distribution[i] + 1;
                 (value < p.rtMax ? rts : slows).push_back(value);
                 criterion = true;
             } else if (!criterion && activation_trial < -p.bnds) {
-                value = i + nd_mean_sd(rng) + 1;
+                value = i + residual_distribution[i] + 1;
                 (value < p.rtMax ? errs : slows).push_back(value);
                 criterion = true;
             }
