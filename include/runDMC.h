@@ -1,6 +1,7 @@
 #ifndef CPP_RUNDMCSIM_HPP
 #define CPP_RUNDMCSIM_HPP
 
+#include <map>
 #include "inDMC.h"
 
 void run_dmc_sim(
@@ -47,6 +48,11 @@ void variable_starting_point(
         std::vector<double> &sp,
         int sign
 );
+
+void residual_rt(
+        Prms &p,
+        std::vector<double> &residual_distribution
+        );
 
 std::vector<double> calculate_caf(
         std::vector<double> &rts,
