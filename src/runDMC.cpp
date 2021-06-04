@@ -115,9 +115,10 @@ void residual_rt(Prms &p, std::vector<double> &residual_distribution) {
         boost::random::normal_distribution<double> dist(p.resMean, p.resSD);
         for (auto &i : residual_distribution) i = std::max(0.0, dist(rng));
     } else if (p.resDist == 2) {
-        // Standard uniform distribution with min/max
-        boost::random::uniform_real_distribution<double> dist(p.resMin, p.resMax);
-        for (auto &i : residual_distribution) i = dist(rng);
+        // Standard uniform distribution with mean + sd
+        double range = std::max(0.01, sqrt((p.resSD*p.resSD / (1.0/12.0))) / 2);
+        boost::random::uniform_real_distribution<double> dist(p.resMean - range, p.resMean + range);
+        for (auto &i : residual_distribution) i = std::max(0.0, dist(rng));
     }
 
 }

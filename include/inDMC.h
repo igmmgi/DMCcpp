@@ -14,8 +14,6 @@ struct Prms {
     int resDist = 1;
     double resMean = 300;
     double resSD = 30;
-    double resMin = 200;
-    double resMax = 400;
     unsigned int rtMax = 5000;
     unsigned long nTrl = 100000;
     unsigned int tmax = 1000;
