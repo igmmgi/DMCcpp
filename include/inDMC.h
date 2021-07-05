@@ -34,7 +34,7 @@ struct Prms {
     bool printInputArgs = true;
     bool printResults = true;
     bool setSeed = false; // if true, seed set to seed value
-    unsigned long seedValue = 1234; 
+    unsigned long seedValue = 1; 
     std::vector<double> pDelta;
 
 };

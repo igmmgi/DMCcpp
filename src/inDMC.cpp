@@ -2,7 +2,7 @@
 #include <iomanip>
 #include <getopt.h>
 #include <string.h>
-#include "../include/inDMC.h"
+#include "inDMC.h"
 
 void show_help() {
     std::cout << "DMC model simulation\n"
