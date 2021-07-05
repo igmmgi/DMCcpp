@@ -6,7 +6,7 @@ find_package(Threads)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_BUILD_TYPE Release)
 
-set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror")
+# set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror")
 set(CMAKE_CXX_FLAGS_RELEASE "-O2")
 
 include_directories(include)

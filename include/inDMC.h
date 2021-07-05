@@ -33,8 +33,8 @@ struct Prms {
     std::vector<double> vCAF;
     bool printInputArgs = true;
     bool printResults = true;
-    bool setSeed = false; // if true, use RNGType rng(1) called
-    unsigned long seedValue = 1; // if true, use RNGType rng(1) called
+    bool setSeed = false; // if true, seed set to seed value
+    unsigned long seedValue = 1234; 
     std::vector<double> pDelta;
 
 };

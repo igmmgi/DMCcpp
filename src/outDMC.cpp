@@ -49,25 +49,22 @@ void print_results(
     std::cout << "\n";
 
     std::cout << "effect" << "\t" << std::fixed << std::setprecision(1);
-    std::setw(5);
+    //std::setw(5);
     for (int i = 0; i < p.nDelta; i++)
         std::cout << resSum["delta_pct_delta"][i] << "\t";
     std::cout << "\n\n";
 
     // results caf
     std::cout << "CAF Values:\n" << "\t";
-    std::setw(3);
     for (int i = 0; i < p.nCAF; i++)
         std::cout << static_cast<int>(p.vCAF[i]) << "-" << static_cast<int>(p.vCAF[i+1]) << "%\t";
     std::cout << "\n";
 
     std::cout << "comp" << "\t" << std::fixed << std::setprecision(3);
-    std::setw(7);
     for (int i = 0; i < p.nCAF; i++)
         std::cout << resSum["caf_comp"][i] << "\t";
     std::cout << "\n";
     std::cout << "incomp" << "\t" << std::fixed << std::setprecision(3);
-    std::setw(7);
     for (int i = 0; i < p.nCAF; i++)
         std::cout << resSum["caf_incomp"][i] << "\t";
     std::cout << std::endl;

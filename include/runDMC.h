@@ -1,8 +1,11 @@
 #ifndef CPP_RUNDMCSIM_HPP
 #define CPP_RUNDMCSIM_HPP
 
+#include <boost/random.hpp>
 #include <map>
 #include "inDMC.h"
+
+typedef boost::random::mt19937_64 RNG;
 
 void run_dmc_sim(
         Prms &p,
@@ -40,19 +43,19 @@ void calculate_delta(
 void variable_drift_rate(
         Prms &p,
         std::vector<double> &dr,
-        int sign
+        RNG &rng
 );
 
 void variable_starting_point(
         Prms &p,
         std::vector<double> &sp,
-        int sign
+        RNG &rng
 );
 
 void residual_rt(
         Prms &p,
         std::vector<double> &residual_distribution,
-        int sign
+        RNG &rng
         );
 
 std::vector<double> calculate_caf(
@@ -71,7 +74,7 @@ void run_simulation(
         std::vector<double> &rts,
         std::vector<double> &errs,
         std::vector<double> &slows,
-        int sign
+        RNG rng
 );
 
 void run_simulation(
@@ -82,7 +85,7 @@ void run_simulation(
         std::vector<double> &rts,
         std::vector<double> &errs,
         std::vector<double> &slows,
-        int sign
+        RNG rng
 );
 
 #endif //CPP_RUNDMCSIM_HPP
