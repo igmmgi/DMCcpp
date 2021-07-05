@@ -1,15 +1,14 @@
-#include <vector>
 #include <chrono>
 #include <map>
 #include <boost/random.hpp>
 #include <thread>
 #include <mutex>
-#include "../include/runDMC.h"
+#include "runDMC.h"
 
 std::mutex m;
 
 
-RNG generate_seed(Prms &p, int sign) {
+RNG random_engine(Prms &p, int sign) {
     if (p.setSeed) {
         RNG rng(p.seedValue + sign);
         return rng;
@@ -44,7 +43,7 @@ void run_dmc_sim(
         std::ref(trials),
         std::ref(compatibility[i]),
         std::ref(sign[i]));
-    };
+    }
 
     for (auto &thread : threads)
         if (thread.joinable()) thread.join();
@@ -61,7 +60,7 @@ void run_dmc_sim_ci(
         const std::string &comp,
         int sign) {
 
-    RNG rng = generate_seed(p, sign);
+    RNG rng = random_engine(p, sign);
     
     std::vector<double> rts;
     std::vector<double> errs;
