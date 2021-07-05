@@ -76,7 +76,8 @@ void process_input_args(int argc, char **argv, Prms &p, bool &argProblem) {
             {"printInputArgs", 1, nullptr, 24},
             {"printResults",   1, nullptr, 25},
             {"setSeed",        1, nullptr, 26},
-            {"help",           0, nullptr, 27},
+            {"seedValue",      1, nullptr, 27},
+            {"help",           0, nullptr, 28},
             {nullptr,          0, nullptr, 0},
     };
 
@@ -180,6 +181,9 @@ void process_input_args(int argc, char **argv, Prms &p, bool &argProblem) {
                     p.setSeed = static_cast<bool>(std::stoi(optarg));
                     break;
                 case 27:
+                    p.seedValue = static_cast<unsigned long>(std::stoi(optarg));
+                    break;
+                case 28:
                     show_help();
                     argProblem = true;
                     break;

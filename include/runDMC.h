@@ -51,7 +51,8 @@ void variable_starting_point(
 
 void residual_rt(
         Prms &p,
-        std::vector<double> &residual_distribution
+        std::vector<double> &residual_distribution,
+        int sign
         );
 
 std::vector<double> calculate_caf(

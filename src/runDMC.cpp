@@ -88,7 +88,7 @@ void run_dmc_sim_ci(
 
 void variable_drift_rate(Prms &p, std::vector<double> &dr, int sign) {
 
-    const uint32_t s = p.setSeed ? 1 : std::time(nullptr);
+    const uint32_t s = p.setSeed ? p.seedValue : std::time(nullptr);
     boost::random::mt19937_64 rng(s + sign);
     boost::random::beta_distribution<double> bdDR(p.drShape, p.drShape);
 
@@ -98,7 +98,7 @@ void variable_drift_rate(Prms &p, std::vector<double> &dr, int sign) {
 
 void variable_starting_point(Prms &p, std::vector<double> &sp, int sign) {
 
-    const uint32_t s = p.setSeed ? 1 : std::time(nullptr);
+    const uint32_t s = p.setSeed ? p.seedValue : std::time(nullptr);
     boost::random::mt19937_64 rng(s + sign);
     boost::random::beta_distribution<double> bdSP(p.spShape, p.spShape);
 
@@ -106,10 +106,10 @@ void variable_starting_point(Prms &p, std::vector<double> &sp, int sign) {
 
 }
 
-void residual_rt(Prms &p, std::vector<double> &residual_distribution) {
+void residual_rt(Prms &p, std::vector<double> &residual_distribution, int sign) {
 
-    const uint32_t s = p.setSeed ? 1 : std::time(nullptr);
-    boost::random::mt19937_64 rng(s + 1);
+    const uint32_t s = p.setSeed ? p.seedValue : std::time(nullptr);
+    boost::random::mt19937_64 rng(s + sign);
     if (p.resDist == 1) {
         // Standard normal distribution with mean + sd (NB make sure no -ve)
         boost::random::normal_distribution<double> dist(p.resMean, p.resSD);
@@ -133,13 +133,13 @@ void run_simulation(
         std::vector<double> &slows,
         int sign) {
 
-    const uint32_t s = p.setSeed ? 1 : std::time(nullptr);
+    const uint32_t s = p.setSeed ? p.seedValue : std::time(nullptr);
     boost::random::mt19937_64 rng(s + sign);
     boost::random::normal_distribution<double> snd(0.0, 1.0);
 
     // residual RT distribution
     std::vector<double> residual_distribution(p.nTrl);
-    residual_rt(p, residual_distribution);
+    residual_rt(p, residual_distribution, sign);
 
     double activation_trial;
     double value;
@@ -186,13 +186,13 @@ void run_simulation(
         std::vector<double> &slows,
         int sign) {
 
-    const uint32_t s = p.setSeed ? 1 : std::time(nullptr);
+    const uint32_t s = p.setSeed ? p.seedValue : std::time(nullptr);
     boost::random::mt19937_64 rng(s + sign);
     boost::random::normal_distribution<double> snd(0.0, 1.0);
 
     // residual RT distribution
     std::vector<double> residual_distribution(p.nTrl);
-    residual_rt(p, residual_distribution);
+    residual_rt(p, residual_distribution, sign);
 
     double activation_trial;
     bool criterion;

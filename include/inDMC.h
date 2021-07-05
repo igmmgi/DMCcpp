@@ -34,6 +34,7 @@ struct Prms {
     bool printInputArgs = true;
     bool printResults = true;
     bool setSeed = false; // if true, use RNGType rng(1) called
+    unsigned long seedValue = 1; // if true, use RNGType rng(1) called
     std::vector<double> pDelta;
 
 };
