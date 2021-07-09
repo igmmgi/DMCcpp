@@ -27,8 +27,9 @@ void run_dmc_sim(
 
     // equation 4
     std::vector<double> eq4(p.tmax, 0.0);
-    for (unsigned int i = 1; i <= p.tmax; i++)
-        eq4[i - 1] = (p.amp * exp(-(i / p.tau))) * pow(((exp(1) * i / (p.aaShape - 1) / p.tau)), (p.aaShape - 1));
+    for (unsigned int i = 0; i < p.tmax; i++) {
+        eq4[i] = p.amp * exp(-(i + 1.0) / p.tau) * pow((exp(1) * (i + 1.0) / (p.aaShape - 1) / p.tau), p.aaShape - 1);
+    }
     sim["eq4"] = eq4;
 
     // run comp and incomp
@@ -61,7 +62,7 @@ void run_dmc_sim_ci(
         int sign) {
 
     RNG rng = random_engine(p, sign);
-    
+
     std::vector<double> rts;
     std::vector<double> errs;
     std::vector<double> slows;
@@ -69,8 +70,9 @@ void run_dmc_sim_ci(
     std::vector<std::vector<double>> trl_mat(p.nTrlData, std::vector<double>(p.tmax));  // needed if plotting individual trials
 
     std::vector<double> u_vec(p.tmax);
-    for (auto i = 0u; i < u_vec.size(); i++)
-        u_vec[i] = sign * sim["eq4"][i] * ((p.aaShape - 1) / (i + 1) - 1 / p.tau);
+    for (auto i = 0u; i < u_vec.size(); i++) {
+        u_vec[i] = sign * sim.at("eq4")[i] * ((p.aaShape - 1) / (i+1.0) - 1 / p.tau);
+    }
 
     // variable drift rate/starting point?
     std::vector<double> dr(p.nTrl, p.drc);
@@ -146,11 +148,11 @@ void run_simulation(
         activation_trial = sp[trl];
         for (auto i = 0u; i < p.tmax; i++) {
             activation_trial += (u_vec[i] + dr[trl] + (p.sigma * snd(rng)));
-            if (activation_trial > p.bnds) {
+            if (activation_trial  > p.bnds) {
                 value = i + residual_distribution[trl] + 1;
                 (value < p.rtMax ? rts : slows).push_back(value);
                 break;
-            } else if (activation_trial < -p.bnds) {
+            } else if (activation_trial  < -p.bnds) {
                 value = i + residual_distribution[trl] + 1;
                 (value < p.rtMax ? errs : slows).push_back(value);
                 break;
@@ -224,7 +226,7 @@ std::vector<double> calculate_summary(
 
     // rtCor, sdRtCor, perErr, rtErr, sdRtErr
     std::vector<double> res(6);
-    if (rts.size() > 0) {
+    if (!rts.empty()) {
         res[0] = accumulate(rts.begin(), rts.end(), 0.0) / rts.size();
         res[1] = std::sqrt(std::inner_product(rts.begin(), rts.end(), rts.begin(), 0.0) / rts.size() - res[0] * res[0]);
     }

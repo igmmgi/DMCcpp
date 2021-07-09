@@ -1,7 +1,7 @@
 #include <iostream>
 #include <iomanip>
 #include <getopt.h>
-#include <string.h>
+#include <cstring>
 #include "inDMC.h"
 
 void show_help() {
