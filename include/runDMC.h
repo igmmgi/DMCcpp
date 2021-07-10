@@ -32,7 +32,8 @@ std::vector<double> calculate_summary(
 
 std::vector<double> calculate_percentile(
         std::vector<double> vDelta,
-        std::vector<double> &rts
+        std::vector<double> &rts,
+        int tType
 );
 
 void calculate_delta(

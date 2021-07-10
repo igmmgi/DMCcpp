@@ -96,7 +96,7 @@ void run_dmc_sim_ci(
 
     // results summary
     resSum["resSum_" + comp] = calculate_summary(rts, errs, slows, p.nTrl);
-    resSum["delta_pct_" + comp] = calculate_percentile(p.vDelta, rts);
+    resSum["delta_pct_" + comp] = calculate_percentile(p.vDelta, rts, p.tDelta);
     resSum["caf_" + comp] = calculate_caf(rts, errs, p.nCAF);
     m.unlock();
 
@@ -244,28 +244,41 @@ std::vector<double> calculate_summary(
 
 std::vector<double> calculate_percentile(
         std::vector<double> vDelta,
-        std::vector<double> &rts) {
+        std::vector<double> &rts,
+        int type) {
 
     int nDelta = vDelta.size() - 2;
-    std::vector<double> res(nDelta, 0);
+    std::vector<double> res_p(nDelta, 0);
+    std::vector<double> res_b(nDelta+1, 0);
+
+    double pct_idx;
+    std::vector<int> pct_idx_int(nDelta);
+    double pct_idx_dec;
+
     if (rts.size() != 0) {
-
         std::sort(rts.begin(), rts.end());
-
-        double pct_idx;
-        int pct_idx_int;
-        double pct_idx_dec;
-
         for (int i = 0; i < nDelta; i++) {
             pct_idx = (vDelta[i+1] / 100.0) * (rts.size() - 1);
-            pct_idx_int = int(pct_idx);
-            pct_idx_dec = pct_idx - static_cast<double>(pct_idx_int);
-            res[i] = rts[pct_idx_int] + ((rts[pct_idx_int + 1] - rts[pct_idx_int]) * pct_idx_dec);
+            pct_idx_int[i] = int(pct_idx);
+            pct_idx_dec = pct_idx - static_cast<double>(pct_idx_int[i]);
+            res_p[i] = rts[pct_idx_int[i]] + ((rts[pct_idx_int[i] + 1] - rts[pct_idx_int[i]]) * pct_idx_dec);
         }
-
+    }
+    if (type == 1) {
+        return res_p;
     }
 
-    return res;
+    unsigned long idxStart, idxEnd;
+    idxStart = 0;
+    for (unsigned long i = 0; i < pct_idx_int.size() + 1; i++) {
+        idxEnd = i < pct_idx_int.size() ? pct_idx_int[i]: rts.size();
+        for (unsigned long j = idxStart; j < idxEnd; j++) {
+            res_b[i] += rts[j];
+        }
+        res_b[i] /= (idxEnd - idxStart);
+        idxStart = idxEnd;
+    }
+    return res_b;
 
 }
 

@@ -29,13 +29,14 @@ struct Prms {
     unsigned long nTrlData = 5;
     int nDelta = 19;
     std::vector<double> vDelta;
+    std::vector<double> pDelta;
+    int tDelta = 1;
     int nCAF = 5;
     std::vector<double> vCAF;
     bool printInputArgs = true;
     bool printResults = true;
     bool setSeed = false; // if true, seed set to seed value
     unsigned long seedValue = 1; 
-    std::vector<double> pDelta;
 
 };
 

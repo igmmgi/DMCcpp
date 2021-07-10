@@ -28,29 +28,36 @@ void print_results(
               << std::setprecision(1) << resSum["resSum_incomp"][5] << "\n\n";
 
     // results delta distribution
+    int nDelta = (p.tDelta == 1) ? p.nDelta : p.nDelta + 1;
     std::cout << "Delta Values:\n" << "\t";
-    for (int i = 1; i <= p.nDelta; i++)
-        std::cout << p.vDelta[i] << "%\t";
-    std::cout << "\n";
+    if (p.tDelta == 1) {
+        for (int i = 1; i <= nDelta; i++)
+            std::cout << p.vDelta[i] << "%\t";
+        std::cout << "\n";
+    } else if (p.tDelta == 2) {
+        for (int i = 1; i <= nDelta; i++)
+            std::cout << "Bin " << i << "\t";
+        std::cout << "\n";
+    }
 
     std::cout << "comp" << "\t" << std::fixed << std::setprecision(1);
-    for (int i = 0; i < p.nDelta; i++)
+    for (int i = 0; i < nDelta; i++)
         std::cout << resSum["delta_pct_comp"][i] << "\t";
     std::cout << "\n";
 
     std::cout << "incomp" << "\t" << std::fixed << std::setprecision(1);
-    for (int i = 0; i < p.nDelta; i++)
+    for (int i = 0; i < nDelta; i++)
         std::cout << resSum["delta_pct_incomp"][i] << "\t";
     std::cout << "\n";
 
     std::cout << "mean" << "\t" << std::fixed << std::setprecision(1);
-    for (int i = 0; i < p.nDelta; i++)
+    for (int i = 0; i < nDelta; i++)
         std::cout << resSum["delta_pct_mean"][i] << "\t";
     std::cout << "\n";
 
     std::cout << "effect" << "\t" << std::fixed << std::setprecision(1);
     //std::setw(5);
-    for (int i = 0; i < p.nDelta; i++)
+    for (int i = 0; i < nDelta; i++)
         std::cout << resSum["delta_pct_delta"][i] << "\t";
     std::cout << "\n\n";
 

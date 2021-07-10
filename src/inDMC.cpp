@@ -35,6 +35,7 @@ void show_help() {
                  "nTrlData: option to plot n trials when used within Rcpp\n"
                  "nDelta: number of bins for rt distribution analysis\n"
                  "pDelta: alternative to nDelta, giving specific percentile values (enter as --pDelta 25,50,75)\n"
+                 "tDelta: type of delta calculate (1 = direct percentile, 2 = percentile bin bounds averaging)\n"
                  "nCAF: number of bins for conditional accuracy function analysis\n"
                  "printInputArgs: 0/1 print input arguments to console\n"
                  "printResults: 0/1 print results summary to console\n\n"
@@ -72,12 +73,13 @@ void process_input_args(int argc, char **argv, Prms &p, bool &argProblem) {
             {"nTrlData",       1, nullptr, 20},  // when used from within Rcpp to plot individual trials (lower left plot)
             {"nDelta",         1, nullptr, 21},
             {"pDelta",         1, nullptr, 22},
-            {"nCAF",           1, nullptr, 23},
-            {"printInputArgs", 1, nullptr, 24},
-            {"printResults",   1, nullptr, 25},
-            {"setSeed",        1, nullptr, 26},
-            {"seedValue",      1, nullptr, 27},
-            {"help",           0, nullptr, 28},
+            {"tDelta",         1, nullptr, 23},
+            {"nCAF",           1, nullptr, 24},
+            {"printInputArgs", 1, nullptr, 25},
+            {"printResults",   1, nullptr, 26},
+            {"setSeed",        1, nullptr, 27},
+            {"seedValue",      1, nullptr, 28},
+            {"help",           0, nullptr, 29},
             {nullptr,          0, nullptr, 0},
     };
 
@@ -152,7 +154,7 @@ void process_input_args(int argc, char **argv, Prms &p, bool &argProblem) {
                 case 21:
                     p.nDelta = std::stoi(optarg);
                     break;
-                case 22:
+               case 22:
                     {
                         char* token = strtok(optarg, ",");
                         int pval;
@@ -169,21 +171,24 @@ void process_input_args(int argc, char **argv, Prms &p, bool &argProblem) {
                         break;
                     }
                 case 23:
-                    p.nCAF = std::stoi(optarg);
+                    p.tDelta = std::stoi(optarg);
                     break;
                 case 24:
-                    p.printInputArgs = static_cast<bool>(std::stoi(optarg));
+                    p.nCAF = std::stoi(optarg);
                     break;
                 case 25:
-                    p.printResults = static_cast<bool>(std::stoi(optarg));
+                    p.printInputArgs = static_cast<bool>(std::stoi(optarg));
                     break;
                 case 26:
-                    p.setSeed = static_cast<bool>(std::stoi(optarg));
+                    p.printResults = static_cast<bool>(std::stoi(optarg));
                     break;
                 case 27:
-                    p.seedValue = static_cast<unsigned long>(std::stoi(optarg));
+                    p.setSeed = static_cast<bool>(std::stoi(optarg));
                     break;
                 case 28:
+                    p.seedValue = static_cast<unsigned long>(std::stoi(optarg));
+                    break;
+                case 29:
                     show_help();
                     argProblem = true;
                     break;
