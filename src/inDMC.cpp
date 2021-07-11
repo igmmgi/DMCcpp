@@ -208,7 +208,7 @@ void process_input_args(int argc, char **argv, Prms &p, bool &argProblem) {
         p.vDelta.insert(p.vDelta.begin(), 0);
         p.vDelta.push_back(100);
     } else {  // equally spaced range of values
-        p.vDelta = linspace(0, 100, p.nDelta + 2);
+            p.vDelta = linspace(0, 100, p.nDelta + 2 - (p.tDelta - 1));
     }
     p.vCAF = linspace(0, 100, p.nCAF + 1);
 

@@ -5,6 +5,7 @@ DMCcpp.cbp
 cp2RcppDir.sh
 dmcSim
 Makefile
+Testing/
 
 # cmake stuff
 .cache
