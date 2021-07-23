@@ -21,8 +21,8 @@ RNG random_engine(Prms &p, int sign) {
 
 void run_dmc_sim(
         Prms &p,
-        std::map<std::string, std::vector<double>> &resSum,
-        std::map<std::string, std::vector<double>> &sim,
+        std::map<std::string, std::vector<double>> &rsum,
+        std::map<std::string, std::vector<double>> &rsim,
         std::map<std::string, std::vector<std::vector<double>>> &trials) {
 
     // equation 4
@@ -30,7 +30,7 @@ void run_dmc_sim(
     for (unsigned int i = 0; i < p.tmax; i++) {
         eq4[i] = p.amp * exp(-(i + 1.0) / p.tau) * pow((exp(1) * (i + 1.0) / (p.aaShape - 1) / p.tau), p.aaShape - 1);
     }
-    sim["eq4"] = eq4;
+    rsim["eq4"] = eq4;
 
     // run comp and incomp
     std::vector<std::thread> threads;
@@ -39,8 +39,8 @@ void run_dmc_sim(
     for (int i = 0; i < 2; i++) {
         threads.emplace_back(run_dmc_sim_ci,
         std::ref(p),
-        std::ref(resSum),
-        std::ref(sim),
+        std::ref(rsum),
+        std::ref(rsim),
         std::ref(trials),
         std::ref(compatibility[i]),
         std::ref(sign[i]));
@@ -49,7 +49,7 @@ void run_dmc_sim(
     for (auto &thread : threads)
         if (thread.joinable()) thread.join();
 
-    calculate_delta(resSum);  // finalize results requiring both comp/incomp
+    calculate_delta(rsum);  // finalize results requiring both comp/incomp
 
 }
 
@@ -95,8 +95,9 @@ void run_dmc_sim_ci(
     sim["slows_" + comp] = slows;
 
     // results summary
-    resSum["resSum_" + comp] = calculate_summary(rts, errs, slows, p.nTrl);
-    resSum["delta_pct_" + comp] = calculate_percentile(p.vDelta, rts, p.tDelta);
+    resSum[comp] = calculate_summary(rts, errs, slows, p.nTrl);
+    resSum["delta_correct_" + comp] = calculate_percentile(p.vDelta, rts, p.tDelta);
+    resSum["delta_errors_" + comp] = calculate_percentile(p.vDelta, errs, p.tDelta);
     resSum["caf_" + comp] = calculate_caf(rts, errs, p.nCAF);
     m.unlock();
 
@@ -283,9 +284,11 @@ std::vector<double> calculate_percentile(
 }
 
 void calculate_delta(std::map<std::string, std::vector<double> > &resDelta) {
-    for (auto i = 0u; i < resDelta["delta_pct_comp"].size(); i++) {
-        resDelta["delta_pct_mean"].push_back((resDelta["delta_pct_comp"][i] + resDelta["delta_pct_incomp"][i]) / 2);
-        resDelta["delta_pct_delta"].push_back(resDelta["delta_pct_incomp"][i] - resDelta["delta_pct_comp"][i]);
+    for (auto i = 0u; i < resDelta["delta_correct_comp"].size(); i++) {
+        resDelta["delta_correct_mean"].push_back((resDelta["delta_correct_comp"][i] + resDelta["delta_correct_incomp"][i]) / 2);
+        resDelta["delta_correct_delta"].push_back(resDelta["delta_correct_incomp"][i] - resDelta["delta_correct_comp"][i]);
+        resDelta["delta_errors_mean"].push_back((resDelta["delta_errors_comp"][i] + resDelta["delta_errors_incomp"][i]) / 2);
+        resDelta["delta_errors_delta"].push_back(resDelta["delta_errors_incomp"][i] - resDelta["delta_errors_comp"][i]);
     }
 }
 
