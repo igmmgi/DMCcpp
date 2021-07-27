@@ -38,7 +38,6 @@ void print_results(
             t = "errors";
         }
 
-        // std::cout << "Delta Values (Correct):\n" << "\t";
         if (p.tDelta == 1) {
             for (int i = 1; i <= p.nDelta; i++)
                 std::cout << p.vDelta[i] << "%\t";
@@ -65,7 +64,6 @@ void print_results(
         std::cout << "\n";
 
         std::cout << "effect" << "\t" << std::fixed << std::setprecision(1);
-        //std::setw(5);
         for (int i = 0; i < p.nDelta; i++)
             std::cout << rsum["delta_" + t + "_delta"][i] << "\t";
         std::cout << "\n\n";

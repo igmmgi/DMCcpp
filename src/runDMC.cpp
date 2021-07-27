@@ -27,9 +27,9 @@ void run_dmc_sim(
 
     // equation 4
     std::vector<double> eq4(p.tmax, 0.0);
-    for (unsigned int i = 0; i < p.tmax; i++) {
+    double t;
+    for (unsigned int i = 0; i < p.tmax; i++)
         eq4[i] = p.amp * exp(-(i + 1.0) / p.tau) * pow((exp(1) * (i + 1.0) / (p.aaShape - 1) / p.tau), p.aaShape - 1);
-    }
     rsim["eq4"] = eq4;
 
     // run comp and incomp
@@ -70,9 +70,8 @@ void run_dmc_sim_ci(
     std::vector<std::vector<double>> trl_mat(p.nTrlData, std::vector<double>(p.tmax));  // needed if plotting individual trials
 
     std::vector<double> u_vec(p.tmax);
-    for (auto i = 0u; i < u_vec.size(); i++) {
-        u_vec[i] = sign * sim.at("eq4")[i] * ((p.aaShape - 1) / (i+1.0) - 1 / p.tau);
-    }
+    for (auto i = 0u; i < u_vec.size(); i++)
+        u_vec[i] = sign * sim.at("eq4")[i] * ((p.aaShape - 1) /(i+1.0) - 1 / p.tau);
 
     // variable drift rate/starting point?
     std::vector<double> dr(p.nTrl, p.drc);
@@ -104,13 +103,25 @@ void run_dmc_sim_ci(
 }
 
 void variable_drift_rate(Prms &p, std::vector<double> &dr, RNG &rng) {
-    boost::random::beta_distribution<double> bdDR(p.drShape, p.drShape);
-    for (auto &i : dr) i = bdDR(rng) * (p.drLimHigh - p.drLimLow) + p.drLimLow;
+    if (p.drDist == 1) {
+        boost::random::beta_distribution<double> bdDR(p.drShape, p.drShape);
+        for (auto &i : dr) i = bdDR(rng) * (p.drLimHigh - p.drLimLow) + p.drLimLow;
+        for (auto &i : dr) std::cout << i << std::endl;
+    } else if (p.drDist == 2) {
+        boost::random::uniform_real_distribution<double> unDR(p.drLimLow, p.drLimHigh);
+        for (auto &i : dr) i = unDR(rng);
+        for (auto &i : dr) std::cout << i << std::endl;
+    }
 }
 
 void variable_starting_point(Prms &p, std::vector<double> &sp, RNG &rng) {
-    boost::random::beta_distribution<double> bdSP(p.spShape, p.spShape);
-    for (auto &i : sp) i = bdSP(rng) * (p.spLimHigh - p.spLimLow) + p.spLimLow;
+    if (p.spDist == 1) {  // beta distribution starting point
+        boost::random::beta_distribution<double> bdSP(p.spShape, p.spShape);
+        for (auto &i : sp) i = bdSP(rng) * (p.spLimHigh - p.spLimLow) + p.spLimLow;
+    } else if (p.spDist == 2) { // uniform distribution starting point
+        boost::random::uniform_real_distribution<double> unSP(p.spLimLow, p.spLimHigh);
+        for (auto &i : sp) i = unSP(rng);
+    }
 }
 
 void residual_rt(Prms &p, std::vector<double> &residual_distribution, RNG &rng) {
@@ -144,11 +155,10 @@ void run_simulation(
 
     double activation_trial;
     double value;
-
     for (auto trl = 0u; trl < p.nTrl; trl++) {
         activation_trial = sp[trl];
         for (auto i = 0u; i < p.tmax; i++) {
-            activation_trial += (u_vec[i] + dr[trl] + (p.sigma * snd(rng)));
+            activation_trial += (u_vec[i]) + dr[trl] + (p.sigma * snd(rng));
             if (activation_trial  > p.bnds) {
                 value = i + residual_distribution[trl] + 1;
                 (value < p.rtMax ? rts : slows).push_back(value);
