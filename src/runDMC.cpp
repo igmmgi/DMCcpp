@@ -106,11 +106,9 @@ void variable_drift_rate(Prms &p, std::vector<double> &dr, RNG &rng) {
     if (p.drDist == 1) {
         boost::random::beta_distribution<double> bdDR(p.drShape, p.drShape);
         for (auto &i : dr) i = bdDR(rng) * (p.drLimHigh - p.drLimLow) + p.drLimLow;
-        for (auto &i : dr) std::cout << i << std::endl;
     } else if (p.drDist == 2) {
         boost::random::uniform_real_distribution<double> unDR(p.drLimLow, p.drLimHigh);
         for (auto &i : dr) i = unDR(rng);
-        for (auto &i : dr) std::cout << i << std::endl;
     }
 }
 
