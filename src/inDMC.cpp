@@ -22,13 +22,11 @@ void show_help() {
                  "rtMax: limit on simulated RT (decision + non-decisional component)\n"
                  "nTrl: number of trials to simulate\n"
                  "tmax: the number of timepoints per trial\n"
-                 "varSP: variable start point\n"
-                 "spDist: distribution of the starting point (1 = beta vs. 2 = uniform)\n"
+                 "spDist: distribution of the starting point (0 = constant, 1 = beta vs. 2 = uniform)\n"
                  "spShape: shape parameter of starting point distribution\n"
                  "spLimLow: lower limit of starting point distribution\n"
                  "spLimHigh: higher limit of starting point distribution\n"
-                 "varDR: variable drift rate\n"
-                 "drDist: distribution of the drift rate (1 = beta vs. 2 = uniform)\n"
+                 "drDist: distribution of the drift rate (0 = constant, 1 = beta vs. 2 = uniform)\n"
                  "drLim: limit range of distribution of drift rate\n"
                  "drShape: shape parameter of drift rate\n"
                  "drLimLow: lower limit of drift rate distribution\n"
@@ -42,11 +40,11 @@ void show_help() {
                  "printInputArgs: 0/1 print input arguments to console\n"
                  "printResults: 0/1 print results summary to console\n\n"
                  "Examples:\n"
-                 "./dmcSim           // Results from Figure 3\n"
-                 "./dmcSim --tau 150 // Results from Figure 4\n"
-                 "./dmcSim --tau 90  // Results from Figure 5\n"
-                 "./dmcSim --varDR 1 // Results from Figure 6\n"
-                 "./dmcSim --varSP 1 // Results from Figure 7" << std::endl;
+                 "./dmcSim            // Results from Figure 3\n"
+                 "./dmcSim --tau 150  // Results from Figure 4\n"
+                 "./dmcSim --tau 90   // Results from Figure 5\n"
+                 "./dmcSim --drDist 1 // Results from Figure 6\n"
+                 "./dmcSim --spDist 1 // Results from Figure 7" << std::endl;
 }
 
 void process_input_args(int argc, char **argv, Prms &p, bool &argProblem) {
@@ -63,27 +61,25 @@ void process_input_args(int argc, char **argv, Prms &p, bool &argProblem) {
             {"rtMax",          1, nullptr,  8},
             {"nTrl",           1, nullptr,  9},
             {"tmax",           1, nullptr, 10},
-            {"varSP",          1, nullptr, 11},
-            {"spDist",         1, nullptr, 12},
-            {"spShape",        1, nullptr, 13},
-            {"spLimLow",       1, nullptr, 14},
-            {"spLimHigh",      1, nullptr, 15},
-            {"varDR",          1, nullptr, 16},
-            {"drDist",         1, nullptr, 17},
-            {"drLimLow",       1, nullptr, 18},
-            {"drLimHigh",      1, nullptr, 19},
-            {"drShape",        1, nullptr, 20},
-            {"fullData",       1, nullptr, 21},  // when used from within Rcpp
-            {"nTrlData",       1, nullptr, 22},  // when used from within Rcpp to plot individual trials (lower left plot)
-            {"nDelta",         1, nullptr, 23},
-            {"pDelta",         1, nullptr, 24},
-            {"tDelta",         1, nullptr, 25},
-            {"nCAF",           1, nullptr, 26},
-            {"printInputArgs", 1, nullptr, 27},
-            {"printResults",   1, nullptr, 28},
-            {"setSeed",        1, nullptr, 29},
-            {"seedValue",      1, nullptr, 30},
-            {"help",           0, nullptr, 31},
+            {"spDist",         1, nullptr, 11},
+            {"spShape",        1, nullptr, 12},
+            {"spLimLow",       1, nullptr, 13},
+            {"spLimHigh",      1, nullptr, 14},
+            {"drDist",         1, nullptr, 15},
+            {"drLimLow",       1, nullptr, 16},
+            {"drLimHigh",      1, nullptr, 17},
+            {"drShape",        1, nullptr, 18},
+            {"fullData",       1, nullptr, 19},  // when used from within Rcpp
+            {"nTrlData",       1, nullptr, 20},  // when used from within Rcpp to plot individual trials (lower left plot)
+            {"nDelta",         1, nullptr, 21},
+            {"pDelta",         1, nullptr, 22},
+            {"tDelta",         1, nullptr, 23},
+            {"nCAF",           1, nullptr, 24},
+            {"printInputArgs", 1, nullptr, 25},
+            {"printResults",   1, nullptr, 26},
+            {"setSeed",        1, nullptr, 27},
+            {"seedValue",      1, nullptr, 28},
+            {"help",           0, nullptr, 29},
             {nullptr,          0, nullptr, 0},
     };
 
@@ -126,45 +122,39 @@ void process_input_args(int argc, char **argv, Prms &p, bool &argProblem) {
                     p.tmax = static_cast<unsigned int>(std::stoi(optarg));
                     break;
                 case 11:
-                    p.varSP = static_cast<bool>(std::stoi(optarg));
-                    break;
-                case 12:
                     p.spDist = std::stod(optarg);
                     break;
-                case 13:
+                case 12:
                     p.spShape = std::stod(optarg);
                     break;
-                case 14:
+                case 13:
                     p.spLimLow = std::stod(optarg);
                     break;
-                case 15:
+                case 14:
                     p.spLimHigh = std::stod(optarg);
                     break;
-                case 16:
-                    p.varDR = static_cast<bool>(std::stoi(optarg));
-                    break;
-                case 17:
+                case 15:
                     p.drDist = std::stod(optarg);
                     break;
-                case 18:
+                case 16:
                     p.drLimLow = std::stod(optarg);
                     break;
-                case 19:
+                case 17:
                     p.drLimHigh = std::stod(optarg);
                     break;
-                case 20:
+                case 18:
                     p.drShape = std::stod(optarg);
                     break;
-                case 21:
+                case 19:
                     p.fullData = static_cast<bool>(std::stoi(optarg));
                     break;
-                case 22:
+                case 20:
                     p.nTrlData = static_cast<unsigned long>(std::stoi(optarg));
                     break;
-                case 23:
+                case 21:
                     p.nDelta = std::stoi(optarg);
                     break;
-                case 24:
+                case 22:
                     {
                         char* token = strtok(optarg, ",");
                         int pval;
@@ -180,25 +170,25 @@ void process_input_args(int argc, char **argv, Prms &p, bool &argProblem) {
                         p.nDelta = p.pDelta.size();
                         break;
                     }
-                case 25:
+                case 23:
                     p.tDelta = std::stoi(optarg);
                     break;
-                case 26:
+                case 24:
                     p.nCAF = std::stoi(optarg);
                     break;
-                case 27:
+                case 25:
                     p.printInputArgs = static_cast<bool>(std::stoi(optarg));
                     break;
-                case 28:
+                case 26:
                     p.printResults = static_cast<bool>(std::stoi(optarg));
                     break;
-                case 29:
+                case 27:
                     p.setSeed = static_cast<bool>(std::stoi(optarg));
                     break;
-                case 30:
+                case 28:
                     p.seedValue = static_cast<unsigned long>(std::stoi(optarg));
                     break;
-                case 31:
+                case 29:
                     show_help();
                     argProblem = true;
                     break;
@@ -233,8 +223,8 @@ void print_input_args(Prms &p) {
     std::cout << "bnds: " << p.bnds << std::setw(12);
     std::cout << "resMean: " << p.resMean << std::setw(12);
     std::cout << "resSD: " << p.resSD << std::setw(12);
-    if (p.varSP) std::cout << "spShape: " << p.spShape << std::setw(12);
-    if (p.varDR) std::cout << "drShape: " << p.drShape << std::setw(12);
+    if (p.spDist != 0) std::cout << "spShape: " << p.spShape << std::setw(12);
+    if (p.drDist != 0) std::cout << "drShape: " << p.drShape << std::setw(12);
     std::cout << "\n\n";
 }
 

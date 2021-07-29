@@ -17,13 +17,11 @@ struct Prms {
     unsigned int rtMax = 5000;
     unsigned long nTrl = 100000;
     unsigned int tmax = 1000;
-    bool varSP = false;
-    int spDist = 1;
+    int spDist = 0;
     double spShape = 3;
     double spLimLow = -75;
     double spLimHigh = 75;
-    bool varDR = false;
-    int drDist = 1;
+    int drDist = 0;
     double drShape = 3;
     double drLimLow = 0.1;
     double drLimHigh = 0.7;
@@ -38,7 +36,7 @@ struct Prms {
     bool printInputArgs = true;
     bool printResults = true;
     bool setSeed = false; // if true, seed set to seed value
-    unsigned long seedValue = 1; 
+    unsigned long seedValue = 1;
 
 };
 
