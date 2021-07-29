@@ -26,6 +26,7 @@ void show_help() {
                  "spShape: shape parameter of starting point distribution\n"
                  "spLimLow: lower limit of starting point distribution\n"
                  "spLimHigh: higher limit of starting point distribution\n"
+                 "spBias: starting point bias\n"
                  "drDist: distribution of the drift rate (0 = constant, 1 = beta vs. 2 = uniform)\n"
                  "drLim: limit range of distribution of drift rate\n"
                  "drShape: shape parameter of drift rate\n"
@@ -65,21 +66,22 @@ void process_input_args(int argc, char **argv, Prms &p, bool &argProblem) {
             {"spShape",        1, nullptr, 12},
             {"spLimLow",       1, nullptr, 13},
             {"spLimHigh",      1, nullptr, 14},
-            {"drDist",         1, nullptr, 15},
-            {"drLimLow",       1, nullptr, 16},
-            {"drLimHigh",      1, nullptr, 17},
-            {"drShape",        1, nullptr, 18},
-            {"fullData",       1, nullptr, 19},  // when used from within Rcpp
-            {"nTrlData",       1, nullptr, 20},  // when used from within Rcpp to plot individual trials (lower left plot)
-            {"nDelta",         1, nullptr, 21},
-            {"pDelta",         1, nullptr, 22},
-            {"tDelta",         1, nullptr, 23},
-            {"nCAF",           1, nullptr, 24},
-            {"printInputArgs", 1, nullptr, 25},
-            {"printResults",   1, nullptr, 26},
-            {"setSeed",        1, nullptr, 27},
-            {"seedValue",      1, nullptr, 28},
-            {"help",           0, nullptr, 29},
+            {"spBias",         1, nullptr, 15},
+            {"drDist",         1, nullptr, 16},
+            {"drLimLow",       1, nullptr, 17},
+            {"drLimHigh",      1, nullptr, 18},
+            {"drShape",        1, nullptr, 19},
+            {"fullData",       1, nullptr, 20},  // when used from within Rcpp
+            {"nTrlData",       1, nullptr, 21},  // when used from within Rcpp to plot individual trials (lower left plot)
+            {"nDelta",         1, nullptr, 22},
+            {"pDelta",         1, nullptr, 23},
+            {"tDelta",         1, nullptr, 24},
+            {"nCAF",           1, nullptr, 25},
+            {"printInputArgs", 1, nullptr, 26},
+            {"printResults",   1, nullptr, 27},
+            {"setSeed",        1, nullptr, 28},
+            {"seedValue",      1, nullptr, 29},
+            {"help",           0, nullptr, 30},
             {nullptr,          0, nullptr, 0},
     };
 
@@ -134,27 +136,30 @@ void process_input_args(int argc, char **argv, Prms &p, bool &argProblem) {
                     p.spLimHigh = std::stod(optarg);
                     break;
                 case 15:
-                    p.drDist = std::stod(optarg);
+                    p.spBias = std::stod(optarg);
                     break;
                 case 16:
-                    p.drLimLow = std::stod(optarg);
+                    p.drDist = std::stod(optarg);
                     break;
                 case 17:
-                    p.drLimHigh = std::stod(optarg);
+                    p.drLimLow = std::stod(optarg);
                     break;
                 case 18:
-                    p.drShape = std::stod(optarg);
+                    p.drLimHigh = std::stod(optarg);
                     break;
                 case 19:
-                    p.fullData = static_cast<bool>(std::stoi(optarg));
+                    p.drShape = std::stod(optarg);
                     break;
                 case 20:
-                    p.nTrlData = static_cast<unsigned long>(std::stoi(optarg));
+                    p.fullData = static_cast<bool>(std::stoi(optarg));
                     break;
                 case 21:
-                    p.nDelta = std::stoi(optarg);
+                    p.nTrlData = static_cast<unsigned long>(std::stoi(optarg));
                     break;
                 case 22:
+                    p.nDelta = std::stoi(optarg);
+                    break;
+                case 23:
                     {
                         char* token = strtok(optarg, ",");
                         int pval;
@@ -170,25 +175,25 @@ void process_input_args(int argc, char **argv, Prms &p, bool &argProblem) {
                         p.nDelta = p.pDelta.size();
                         break;
                     }
-                case 23:
+                case 24:
                     p.tDelta = std::stoi(optarg);
                     break;
-                case 24:
+                case 25:
                     p.nCAF = std::stoi(optarg);
                     break;
-                case 25:
+                case 26:
                     p.printInputArgs = static_cast<bool>(std::stoi(optarg));
                     break;
-                case 26:
+                case 27:
                     p.printResults = static_cast<bool>(std::stoi(optarg));
                     break;
-                case 27:
+                case 28:
                     p.setSeed = static_cast<bool>(std::stoi(optarg));
                     break;
-                case 28:
+                case 29:
                     p.seedValue = static_cast<unsigned long>(std::stoi(optarg));
                     break;
-                case 29:
+                case 30:
                     show_help();
                     argProblem = true;
                     break;
@@ -224,6 +229,7 @@ void print_input_args(Prms &p) {
     std::cout << "resMean: " << p.resMean << std::setw(12);
     std::cout << "resSD: " << p.resSD << std::setw(12);
     if (p.spDist != 0) std::cout << "spShape: " << p.spShape << std::setw(12);
+    if (p.spBias != 0) std::cout << "spBias: " << p.spBias << std::setw(12);
     if (p.drDist != 0) std::cout << "drShape: " << p.drShape << std::setw(12);
     std::cout << "\n\n";
 }
