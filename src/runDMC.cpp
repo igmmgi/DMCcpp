@@ -169,13 +169,13 @@ void run_simulation(
         }
     }
 
-    // if (p.varSP) {
+    // if (p.spDist != 0) {
     //     double meanSP = accumulate(sp.begin(), sp.end(), 0.0) / sp.size();
     //     double sdSP = std::sqrt( std::inner_product(sp.begin(), sp.end(), sp.begin(), 0.0) / sp.size() - meanSP * meanSP);
     //     std::cout << "Mean/SD SP: " << meanSP << "/" << sdSP << std::endl << std::endl;
     // }
 
-    // if (p.varDR) {
+    // if (p.drDist != 0) {
     //     double meanDR = accumulate(dr.begin(), dr.end(), 0.0) / dr.size();
     //     double sdDR = std::sqrt( std::inner_product(dr.begin(), dr.end(), dr.begin(), 0.0) / dr.size() - meanDR * meanDR);
     //     std::cout << "Mean/SD DR: " << meanDR << "/" << sdDR << std::endl << std::endl;
