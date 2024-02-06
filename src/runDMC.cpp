@@ -256,11 +256,12 @@ std::vector<double> calculate_percentile(const std::vector<double> &vDelta,
                                          std::vector<double> &rts,
                                          const int type) {
 
-  const int nDelta = vDelta.size() - 2;
+  int nDelta = vDelta.size() - 2;
+  int nTrls = static_cast<int>(rts.size());
   std::vector<double> res_p(nDelta, 0);
   std::vector<int> pct_idx_int(nDelta);
 
-  if (rts.size() >= nDelta) {
+  if (nTrls >= nDelta) {
     std::sort(rts.begin(), rts.end());
     for (int i = 0; i < nDelta; i++) {
       const double pct_idx = (vDelta[i + 1] / 100.0) * (rts.size() - 1);

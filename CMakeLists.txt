@@ -9,7 +9,7 @@ set(CMAKE_BUILD_TYPE Release)
 set(CMAKE_CXX_COMPILER "/usr/bin/g++")
 # set(CMAKE_CXX_COMPILER "/usr/bin/clang++")
 
-set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror -Wpedantic")
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror")
 set(CMAKE_CXX_FLAGS_RELEASE "-O2")
 
 include_directories(include)
