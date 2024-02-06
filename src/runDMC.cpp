@@ -9,17 +9,14 @@ std::mutex m;
 
 RNG random_engine(const Prms &p, const int sign) {
   if (p.setSeed) {
-    std::cout << p.seedValue << std::endl;
-    std::cout << sign << std::endl;
     RNG const rng(p.seedValue + sign);
     return rng;
   }
-    const auto seed = std::chrono::duration_cast<std::chrono::milliseconds>(
-                    std::chrono::system_clock::now().time_since_epoch())
-                    .count();
-    const RNG rng(seed + sign);
-    return rng;
-
+  const auto seed = std::chrono::duration_cast<std::chrono::milliseconds>(
+                        std::chrono::system_clock::now().time_since_epoch())
+                        .count();
+  const RNG rng(seed + sign);
+  return rng;
 }
 
 void run_dmc_sim(
@@ -112,13 +109,11 @@ void variable_drift_rate(const Prms &p, std::vector<double> &dr, RNG &rng) {
       i = bdDR(rng) * (p.drLimHigh - p.drLimLow) + p.drLimLow;
   } else if (p.drDist == 2) {
     const boost::random::uniform_real_distribution<double> unDR(p.drLimLow,
-                                                          p.drLimHigh);
+                                                                p.drLimHigh);
     for (auto &i : dr)
       i = unDR(rng);
   }
 }
-
-
 
 void variable_starting_point(const Prms &p, std::vector<double> &sp, RNG &rng) {
   if (p.spDist == 1) { // beta distribution starting point
@@ -127,7 +122,7 @@ void variable_starting_point(const Prms &p, std::vector<double> &sp, RNG &rng) {
       i = (bdSP(rng) * (p.spLimHigh - p.spLimLow) + p.spLimLow) + p.spBias;
   } else if (p.spDist == 2) { // uniform distribution starting point
     const boost::random::uniform_real_distribution<double> unSP(p.spLimLow,
-                                                          p.spLimHigh);
+                                                                p.spLimHigh);
     for (auto &i : sp)
       i = unSP(rng) + p.spBias;
   }
@@ -142,9 +137,10 @@ void residual_rt(const Prms &p, std::vector<double> &residual_distribution,
       i = std::max(0.0, dist(rng));
   } else if (p.resDist == 2) {
     // Standard uniform distribution with mean + sd
-    const double range = std::max(0.01, sqrt((p.resSD * p.resSD / (1.0 / 12.0))) / 2);
-    const boost::random::uniform_real_distribution<double> dist(p.resMean - range,
-                                                          p.resMean + range);
+    const double range =
+        std::max(0.01, sqrt((p.resSD * p.resSD / (1.0 / 12.0))) / 2);
+    const boost::random::uniform_real_distribution<double> dist(
+        p.resMean - range, p.resMean + range);
     for (auto &i : residual_distribution)
       i = std::max(0.0, dist(rng));
   }
@@ -160,7 +156,6 @@ void run_simulation(const Prms &p, const std::vector<double> &u_vec,
   // residual RT distribution
   std::vector<double> residual_distribution(p.nTrl);
   residual_rt(p, residual_distribution, rng);
-
 
   for (auto trl = 0u; trl < p.nTrl; trl++) {
     double activation_trial = sp[trl];
@@ -207,8 +202,8 @@ void run_simulation(const Prms &p, std::vector<double> &activation_sum,
   std::vector<double> residual_distribution(p.nTrl);
   residual_rt(p, residual_distribution, rng);
 
-  //double activation_trial;
-  //bool criterion;
+  // double activation_trial;
+  // bool criterion;
   double value;
   for (auto trl = 0u; trl < p.nTrl; trl++) {
     bool criterion = false;
@@ -260,8 +255,9 @@ std::vector<double> calculate_summary(const std::vector<double> &rts,
   return res;
 }
 
-std::vector<double> calculate_percentile(const std::vector<double>& vDelta,
-                                         std::vector<double> &rts, const int type) {
+std::vector<double> calculate_percentile(const std::vector<double> &vDelta,
+                                         std::vector<double> &rts,
+                                         const int type) {
 
   const int nDelta = vDelta.size() - 2;
   std::vector<double> res_p(nDelta, 0);
@@ -285,7 +281,8 @@ std::vector<double> calculate_percentile(const std::vector<double>& vDelta,
   std::vector<double> res_b(nDelta + 1, 0);
   unsigned long idxStart = 0;
   for (unsigned long i = 0; i < pct_idx_int.size() + 1; i++) {
-    const unsigned long idxEnd = i < pct_idx_int.size() ? pct_idx_int[i] : rts.size();
+    const unsigned long idxEnd =
+        i < pct_idx_int.size() ? pct_idx_int[i] : rts.size();
     for (unsigned long j = idxStart; j < idxEnd; j++) {
       res_b[i] += rts[j];
     }
@@ -314,7 +311,8 @@ void calculate_delta(std::map<std::string, std::vector<double>> &resDelta) {
 }
 
 std::vector<double> calculate_caf(const std::vector<double> &rts,
-                                  const std::vector<double> &errs, const int nCAF) {
+                                  const std::vector<double> &errs,
+                                  const int nCAF) {
 
   std::vector<double> res(nCAF, 0);
 
@@ -323,10 +321,10 @@ std::vector<double> calculate_caf(const std::vector<double> &rts,
     std::vector<std::pair<double, bool>> comb;
     comb.reserve(rts.size() + errs.size());
 
-    //for (double &rt : std::ref(rts))
-    //  comb.emplace_back(rt, false);
-    //for (double &err : std::ref(errs))
-    //  comb.emplace_back(err, true);
+    // for (double &rt : std::ref(rts))
+    //   comb.emplace_back(rt, false);
+    // for (double &err : std::ref(errs))
+    //   comb.emplace_back(err, true);
 
     for (double rt : rts)
       comb.emplace_back(rt, false);
@@ -343,7 +341,8 @@ std::vector<double> calculate_caf(const std::vector<double> &rts,
     for (auto i = 0u; i < bins.size(); i++)
       (comb[i].second == 0) ? countCor[bins[i]]++ : countErr[bins[i]]++;
     for (auto i = 0u; i < countCor.size(); i++)
-      res[i] = 1 - (countErr[i] / static_cast<float>(countCor[i] + countErr[i]));
+      res[i] =
+          1 - (countErr[i] / static_cast<float>(countCor[i] + countErr[i]));
   }
 
   return res;
