@@ -202,20 +202,17 @@ void run_simulation(const Prms &p, std::vector<double> &activation_sum,
   std::vector<double> residual_distribution(p.nTrl);
   residual_rt(p, residual_distribution, rng);
 
-  // double activation_trial;
-  // bool criterion;
-  double value;
   for (auto trl = 0u; trl < p.nTrl; trl++) {
     bool criterion = false;
     double activation_trial = sp[trl];
     for (auto i = 0u; i < p.tmax; i++) {
       activation_trial += u_vec[i] + dr[trl] + (p.sigma * snd(rng));
       if (!criterion && activation_trial > p.bnds) {
-        value = i + residual_distribution[i] + 1;
+        double value = i + residual_distribution[i] + 1;
         (value < p.rtMax ? rts : slows).push_back(value);
         criterion = true;
       } else if (!criterion && activation_trial < -p.bnds) {
-        value = i + residual_distribution[i] + 1;
+        double value = i + residual_distribution[i] + 1;
         (value < p.rtMax ? errs : slows).push_back(value);
         criterion = true;
       }
@@ -263,7 +260,7 @@ std::vector<double> calculate_percentile(const std::vector<double> &vDelta,
   std::vector<double> res_p(nDelta, 0);
   std::vector<int> pct_idx_int(nDelta);
 
-  if (!rts.empty()) {
+  if (rts.size() >= nDelta) {
     std::sort(rts.begin(), rts.end());
     for (int i = 0; i < nDelta; i++) {
       const double pct_idx = (vDelta[i + 1] / 100.0) * (rts.size() - 1);
@@ -320,11 +317,6 @@ std::vector<double> calculate_caf(const std::vector<double> &rts,
 
     std::vector<std::pair<double, bool>> comb;
     comb.reserve(rts.size() + errs.size());
-
-    // for (double &rt : std::ref(rts))
-    //   comb.emplace_back(rt, false);
-    // for (double &err : std::ref(errs))
-    //   comb.emplace_back(err, true);
 
     for (double rt : rts)
       comb.emplace_back(rt, false);
