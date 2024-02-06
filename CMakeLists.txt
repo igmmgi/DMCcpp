@@ -10,7 +10,7 @@ set(CMAKE_CXX_COMPILER "/usr/bin/g++")
 # set(CMAKE_CXX_COMPILER "/usr/bin/clang++")
 
 set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror")
-set(CMAKE_CXX_FLAGS_RELEASE "-O2")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 include_directories(include)
 
