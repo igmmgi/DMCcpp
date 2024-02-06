@@ -15,7 +15,7 @@ void run_dmc_sim(
 );
 
 void run_dmc_sim_ci(
-        Prms &p,
+        const Prms &p,
         std::map<std::string, std::vector<double>> &resSum,
         std::map<std::string, std::vector<double>> &sim,
         std::map<std::string, std::vector<std::vector<double>>> &trials,
@@ -24,16 +24,16 @@ void run_dmc_sim_ci(
 );
 
 std::vector<double> calculate_summary(
-        std::vector<double> &rts,
-        std::vector<double> &errs,
-        std::vector<double> &slows,
+        const std::vector<double> &rts,
+        const std::vector<double> &errs,
+        const std::vector<double> &slows,
         unsigned long nTrl
 );
 
 std::vector<double> calculate_percentile(
-        std::vector<double> vDelta,
+        const std::vector<double>& vDelta,
         std::vector<double> &rts,
-        int tType
+        int type
 );
 
 void calculate_delta(
@@ -42,34 +42,34 @@ void calculate_delta(
         );
 
 void variable_drift_rate(
-        Prms &p,
+        const Prms &p,
         std::vector<double> &dr,
         RNG &rng
 );
 
 void variable_starting_point(
-        Prms &p,
+        const Prms &p,
         std::vector<double> &sp,
         RNG &rng
 );
 
 void residual_rt(
-        Prms &p,
+        const Prms &p,
         std::vector<double> &residual_distribution,
         RNG &rng
         );
 
 std::vector<double> calculate_caf(
-        std::vector<double> &rts,
-        std::vector<double> &errs,
-        int nBins
+        const std::vector<double> &rts,
+        const std::vector<double> &errs,
+        int nCAF
 );
 
 void run_simulation(
-        Prms &p,
+        const Prms &p,
         std::vector<double> &activation_sum,
         std::vector<std::vector<double>> &trial_matrix,
-        std::vector<double> &u_vec,
+        const std::vector<double> &u_vec,
         std::vector<double> &sp,
         std::vector<double> &dr,
         std::vector<double> &rts,
@@ -79,8 +79,8 @@ void run_simulation(
 );
 
 void run_simulation(
-        Prms &p,
-        std::vector<double> &u_vec,
+        const Prms &p,
+        const std::vector<double> &u_vec,
         std::vector<double> &sp,
         std::vector<double> &dr,
         std::vector<double> &rts,

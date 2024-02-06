@@ -5,7 +5,7 @@
 #include "runDMC.h"
 
 void print_results(
-        Prms &p,
+        const Prms &p,
         std::map<std::string, std::vector<double> > &rsum) {
 
     std::cout << "Results Summary:" << "\n";

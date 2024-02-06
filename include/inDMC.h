@@ -42,7 +42,7 @@ struct Prms {
 };
 
 void show_help();
-void print_input_args(Prms &p);
+void print_input_args(const Prms &p);
 void process_input_args(
         int argc,
         char** argv,
