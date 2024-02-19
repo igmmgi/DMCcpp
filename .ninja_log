@@ -1,7 +1,0 @@
-# ninja log v5
-3	1832	1707223012153641591	CMakeFiles/dmcSim.dir/src/runDMC.cpp.o	9d3f26a9bf6948e3
-2	922	1707222293423161851	CMakeFiles/dmcSim.dir/src/outDMC.cpp.o	3784228ddb41bab8
-0	21	1707223132224055030	build.ninja	31837d5b52d244df
-2	472	1707222292971152715	CMakeFiles/dmcSim.dir/src/inDMC.cpp.o	60bab75f37a7b673
-2	736	1707222293235158051	CMakeFiles/dmcSim.dir/src/dmcSim.cpp.o	d7d4a0f1f7b01e91
-1832	1880	1707223012197642477	dmcSim	70006a132a221a5f
