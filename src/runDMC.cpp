@@ -45,7 +45,7 @@ void run_dmc_sim(
   calculate_delta(rsum); // finalize results requiring both comp/incomp
 }
 
-const std::vector<double> automatic_activation(const Prms &p) {
+std::vector<double> automatic_activation(const Prms &p) {
   std::vector<double> aa(p.tmax);
   for (unsigned int i = 0; i < p.tmax; i++)
     aa[i] =
@@ -65,6 +65,9 @@ void run_dmc_sim_ci(
   std::vector<double> rts;
   std::vector<double> errs;
   std::vector<double> slows;
+  rts.reserve(p.nTrl);
+  errs.reserve(p.nTrl);
+  slows.reserve(p.nTrl);
   std::vector<double> activation_sum(p.tmax);
   std::vector<std::vector<double>> trl_mat(
       p.nTrlData,
@@ -103,9 +106,9 @@ void run_dmc_sim_ci(
   m.unlock();
 }
 
-const std::vector<double>
+std::vector<double>
 time_dependent_drift(const Prms &p, int sign,
-                     std::vector<double> &automatic_activation) {
+                     const std::vector<double> &automatic_activation) {
   std::vector<double> tdd(p.tmax);
   for (auto i = 0u; i < tdd.size(); i++)
     tdd[i] = sign * automatic_activation[i] *
@@ -113,7 +116,7 @@ time_dependent_drift(const Prms &p, int sign,
   return tdd;
 }
 
-const std::vector<double> drift_rate(const Prms &p, RNG &rng) {
+std::vector<double> drift_rate(const Prms &p, RNG &rng) {
   std::vector<double> dr(p.nTrl, p.drc);
   if (p.drDist == 1) {
     boost::random::beta_distribution<double> bdDR(p.drShape, p.drShape);
@@ -128,7 +131,7 @@ const std::vector<double> drift_rate(const Prms &p, RNG &rng) {
   return dr;
 }
 
-const std::vector<double> starting_point(const Prms &p, RNG &rng) {
+std::vector<double> starting_point(const Prms &p, RNG &rng) {
   std::vector<double> sp(p.nTrl, p.spBias);
   if (p.spDist == 1) {
     boost::random::beta_distribution<double> bdSP(p.spShape, p.spShape);
@@ -143,7 +146,7 @@ const std::vector<double> starting_point(const Prms &p, RNG &rng) {
   return sp;
 }
 
-const std::vector<double> residual_rt(const Prms &p, RNG &rng) {
+std::vector<double> residual_rt(const Prms &p, RNG &rng) {
   std::vector<double> residual_distribution(p.nTrl);
   if (p.resDist == 1) {
     // Standard normal distribution with mean + sd (NB make sure no -ve)

@@ -10,9 +10,10 @@ set(CMAKE_CXX_COMPILER "/usr/bin/g++")
 # set(CMAKE_CXX_COMPILER "/usr/bin/clang++")
 
 set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -march=native -flto")
 
 include_directories(include)
+
 
 add_executable(dmcSim src/dmcSim.cpp src/inDMC.cpp src/outDMC.cpp src/runDMC.cpp)
 target_link_libraries( dmcSim ${CMAKE_THREAD_LIBS_INIT} )
