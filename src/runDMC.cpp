@@ -3,46 +3,25 @@
 #include <chrono>
 #include <map>
 #include <mutex>
+#include <vector>
+#include <algorithm>
+#include <numeric>
+#include <cmath>
+#include <omp.h>
 #include <thread>
 
 std::mutex m;
 
-RNG random_engine(const Prms &p, const int sign) {
+RNG random_engine(const Prms &p, int sign) {
   if (p.setSeed) {
-    RNG const rng(p.seedValue + sign);
+    RNG rng(p.seedValue + sign);
     return rng;
   }
-  const auto seed = std::chrono::duration_cast<std::chrono::milliseconds>(
-                        std::chrono::system_clock::now().time_since_epoch())
-                        .count();
-  const RNG rng(seed + sign);
+  auto seed = std::chrono::duration_cast<std::chrono::milliseconds>(
+                  std::chrono::system_clock::now().time_since_epoch())
+                  .count();
+  RNG rng(seed + sign);
   return rng;
-}
-
-void run_dmc_sim(
-    Prms &p, std::map<std::string, std::vector<double>> &rsum,
-    std::map<std::string, std::vector<double>> &rsim,
-    std::map<std::string, std::vector<std::vector<double>>> &trials) {
-
-  // equation 4
-  rsim["eq4"] = automatic_activation(p);
-
-  // run comp and incomp simulation
-  std::vector<std::thread> threads;
-  const std::vector<std::string> compatibility{"comp", "incomp"};
-  const std::vector<int> sign{1, -1};
-
-  for (int i = 0; i < 2; i++) {
-    threads.emplace_back(run_dmc_sim_ci, std::ref(p), std::ref(rsum),
-                         std::ref(rsim), std::ref(trials),
-                         std::ref(compatibility[i]), std::ref(sign[i]));
-  }
-
-  for (auto &thread : threads)
-    if (thread.joinable())
-      thread.join();
-
-  calculate_delta(rsum); // finalize results requiring both comp/incomp
 }
 
 std::vector<double> automatic_activation(const Prms &p) {
@@ -54,6 +33,276 @@ std::vector<double> automatic_activation(const Prms &p) {
   return aa;
 }
 
+std::vector<double>
+time_dependent_drift(const Prms &p, int sign,
+                     const std::vector<double> &automatic_activation) {
+  std::vector<double> tdd(p.tmax);
+  for (auto i = 0u; i < tdd.size(); i++)
+    tdd[i] = sign * automatic_activation[i] *
+             ((p.aaShape - 1) / (i + 1.0) - 1 / p.tau);
+  return tdd;
+}
+
+// Single-pass calculation of mean and SD
+std::vector<double> calculate_summary(const std::vector<double> &rts,
+                                      const std::vector<double> &errs,
+                                      const std::vector<double> &slows,
+                                      unsigned long nTrl) {
+  std::vector<double> res(6, 0.0);
+  if (!rts.empty()) {
+    double sum = 0.0, sq_sum = 0.0;
+    for (double v : rts) { sum += v; sq_sum += v * v; }
+    double mean_val = sum / rts.size();
+    res[0] = mean_val;
+    res[1] = std::sqrt(std::max(0.0, sq_sum / rts.size() - mean_val * mean_val));
+  }
+  res[2] = (errs.size() / static_cast<double>(nTrl)) * 100.0;
+  if (!errs.empty()) {
+    double sum = 0.0, sq_sum = 0.0;
+    for (double v : errs) { sum += v; sq_sum += v * v; }
+    double mean_val = sum / errs.size();
+    res[3] = mean_val;
+    res[4] = std::sqrt(std::max(0.0, sq_sum / errs.size() - mean_val * mean_val));
+  }
+  res[5] = (slows.size() / static_cast<double>(nTrl)) * 100.0;
+  return res;
+}
+
+std::vector<double> calculate_percentile(const std::vector<double> &vDelta,
+                                         std::vector<double> &rts, int type) {
+  int nDelta = vDelta.size() - 2;
+  int nTrls = static_cast<int>(rts.size());
+  std::vector<double> res_p(nDelta, 0.0);
+  std::vector<int> pct_idx_int(nDelta);
+
+  if (nTrls >= nDelta) {
+    std::sort(rts.begin(), rts.end());
+    for (int i = 0; i < nDelta; i++) {
+      const double pct_idx = (vDelta[i + 1] / 100.0) * (rts.size() - 1);
+      pct_idx_int[i] = static_cast<int>(pct_idx);
+      const double pct_idx_dec = pct_idx - static_cast<double>(pct_idx_int[i]);
+      res_p[i] =
+          rts[pct_idx_int[i]] +
+          ((rts[pct_idx_int[i] + 1] - rts[pct_idx_int[i]]) * pct_idx_dec);
+    }
+  }
+
+  if (type == 1) {
+    return res_p;
+  }
+
+  std::vector<double> res_b(nDelta + 1, 0.0);
+  unsigned long idxStart = 0;
+  for (unsigned long i = 0; i < pct_idx_int.size() + 1; i++) {
+    const unsigned long idxEnd =
+        i < pct_idx_int.size() ? pct_idx_int[i] : rts.size();
+    double sum = 0.0;
+    for (unsigned long j = idxStart; j < idxEnd; j++) {
+      sum += rts[j];
+    }
+    res_b[i] = (idxEnd > idxStart) ? (sum / (idxEnd - idxStart)) : 0.0;
+    idxStart = idxEnd;
+  }
+  return res_b;
+}
+
+// Linear two-pointer CAF calculation (No 100k pair vector allocation)
+std::vector<double> calculate_caf(const std::vector<double> &rts,
+                                  const std::vector<double> &errs, int nCAF) {
+  std::vector<double> res(nCAF, 0.0);
+  size_t total = rts.size() + errs.size();
+  if (total == 0) return res;
+
+  std::vector<long int> countErr(nCAF, 0);
+  std::vector<long int> countCor(nCAF, 0);
+
+  size_t i_rt = 0, i_err = 0;
+  for (size_t k = 0; k < total; ++k) {
+    int bin = static_cast<int>(nCAF * k / total);
+    if (i_rt < rts.size() && (i_err >= errs.size() || rts[i_rt] <= errs[i_err])) {
+      countCor[bin]++;
+      i_rt++;
+    } else {
+      countErr[bin]++;
+      i_err++;
+    }
+  }
+
+  for (int i = 0; i < nCAF; ++i) {
+    long int total_bin = countCor[i] + countErr[i];
+    res[i] = (total_bin > 0) ? (1.0 - (countErr[i] / static_cast<double>(total_bin))) : 1.0;
+  }
+  return res;
+}
+
+void calculate_delta(std::map<std::string, std::vector<double>> &resDelta) {
+  for (auto i = 0u; i < resDelta["delta_correct_comp"].size(); i++) {
+    resDelta["delta_correct_mean"].push_back(
+        (resDelta["delta_correct_comp"][i] +
+         resDelta["delta_correct_incomp"][i]) /
+        2.0);
+    resDelta["delta_correct_delta"].push_back(
+        resDelta["delta_correct_incomp"][i] -
+        resDelta["delta_correct_comp"][i]);
+    resDelta["delta_errors_mean"].push_back(
+        (resDelta["delta_errors_comp"][i] +
+         resDelta["delta_errors_incomp"][i]) /
+        2.0);
+    resDelta["delta_errors_delta"].push_back(
+        resDelta["delta_errors_incomp"][i] - resDelta["delta_errors_comp"][i]);
+  }
+}
+
+// Helpers for on-the-fly random parameter draws (Zero intermediate vector allocations)
+inline double sample_dr(const Prms &p, RNG &rng,
+                        boost::random::beta_distribution<double> &bdDR,
+                        boost::random::uniform_real_distribution<double> &unDR) {
+  if (p.drDist == 1) return bdDR(rng) * (p.drLimHigh - p.drLimLow) + p.drLimLow;
+  if (p.drDist == 2) return unDR(rng);
+  return p.drc;
+}
+
+inline double sample_sp(const Prms &p, RNG &rng,
+                        boost::random::beta_distribution<double> &bdSP,
+                        boost::random::uniform_real_distribution<double> &unSP) {
+  if (p.spDist == 1) return (bdSP(rng) * (p.spLimHigh - p.spLimLow) + p.spLimLow) + p.spBias;
+  if (p.spDist == 2) return unSP(rng) + p.spBias;
+  return p.spBias;
+}
+
+inline double sample_res(const Prms &p, RNG &rng,
+                         boost::random::normal_distribution<double> &normRes,
+                         boost::random::uniform_real_distribution<double> &unRes) {
+  if (p.resDist == 1) return std::max(0.0, normRes(rng));
+  return std::max(0.0, unRes(rng));
+}
+
+// High-performance trial simulation
+inline void simulate_trial(const Prms &p, const double* u_vec, RNG &rng,
+                           boost::random::normal_distribution<double> &snd,
+                           boost::random::beta_distribution<double> &bdDR,
+                           boost::random::uniform_real_distribution<double> &unDR,
+                           boost::random::beta_distribution<double> &bdSP,
+                           boost::random::uniform_real_distribution<double> &unSP,
+                           boost::random::normal_distribution<double> &normRes,
+                           boost::random::uniform_real_distribution<double> &unRes,
+                           double &out_rt, int &out_choice) {
+  double sp_val = sample_sp(p, rng, bdSP, unSP);
+  double dr_val = sample_dr(p, rng, bdDR, unDR);
+  double res_rt = sample_res(p, rng, normRes, unRes);
+
+  double act = sp_val;
+  out_rt = p.rtMax;
+  out_choice = 0; // 0 = slow/unbound, 1 = correct, -1 = error
+
+  for (unsigned int i = 0; i < p.tmax; ++i) {
+    act += u_vec[i] + dr_val + (p.sigma * snd(rng));
+    if (act > p.bnds) {
+      double val = i + res_rt + 1.0;
+      out_rt = val;
+      out_choice = (val < p.rtMax) ? 1 : 0;
+      return;
+    }
+    if (act < -p.bnds) {
+      double val = i + res_rt + 1.0;
+      out_rt = val;
+      out_choice = (val < p.rtMax) ? -1 : 0;
+      return;
+    }
+  }
+}
+
+void run_dmc_sim(
+    Prms &p, std::map<std::string, std::vector<double>> &rsum,
+    std::map<std::string, std::vector<double>> &rsim,
+    std::map<std::string, std::vector<std::vector<double>>> &trials) {
+
+  // equation 4
+  rsim["eq4"] = automatic_activation(p);
+  const std::vector<double> u_comp = time_dependent_drift(p, 1, rsim["eq4"]);
+  const std::vector<double> u_incomp = time_dependent_drift(p, -1, rsim["eq4"]);
+
+  if (p.fullData) {
+    // If full individual trial data is requested (for plotting traces)
+    std::vector<std::thread> threads;
+    const std::vector<std::string> compatibility{"comp", "incomp"};
+    const std::vector<int> sign{1, -1};
+
+    for (int i = 0; i < 2; i++) {
+      threads.emplace_back(run_dmc_sim_ci, std::ref(p), std::ref(rsum),
+                           std::ref(rsim), std::ref(trials),
+                           std::ref(compatibility[i]), std::ref(sign[i]));
+    }
+    for (auto &thread : threads)
+      if (thread.joinable())
+        thread.join();
+    calculate_delta(rsum);
+    return;
+  }
+
+  // Fast path: OpenMP trial-level parallelism, zero heap vector allocations
+  const size_t total_trials = 2 * p.nTrl;
+  std::vector<double> all_rts(total_trials);
+  std::vector<int> all_choices(total_trials);
+
+  #pragma omp parallel
+  {
+    int tid = omp_get_thread_num();
+    uint64_t seed = (p.setSeed ? (p.seedValue + tid * 10007ULL) : 
+                    (std::chrono::system_clock::now().time_since_epoch().count() + tid * 10007ULL));
+    RNG rng(seed, 0xda3e39cb94b95bdbULL + (tid << 1));
+
+    boost::random::normal_distribution<double> snd(0.0, 1.0);
+    boost::random::beta_distribution<double> bdDR(p.drShape, p.drShape);
+    boost::random::uniform_real_distribution<double> unDR(p.drLimLow, p.drLimHigh);
+    boost::random::beta_distribution<double> bdSP(p.spShape, p.spShape);
+    boost::random::uniform_real_distribution<double> unSP(p.spLimLow, p.spLimHigh);
+    boost::random::normal_distribution<double> normRes(p.resMean, p.resSD);
+    double range = std::max(0.01, sqrt((p.resSD * p.resSD / (1.0 / 12.0))) / 2.0);
+    boost::random::uniform_real_distribution<double> unRes(p.resMean - range, p.resMean + range);
+
+    #pragma omp for schedule(static)
+    for (size_t idx = 0; idx < total_trials; ++idx) {
+      bool is_comp = (idx < p.nTrl);
+      const double* u_vec = is_comp ? u_comp.data() : u_incomp.data();
+      simulate_trial(p, u_vec, rng, snd, bdDR, unDR, bdSP, unSP, normRes, unRes,
+                     all_rts[idx], all_choices[idx]);
+    }
+  }
+
+  // Partition into rts, errs, slows for comp and incomp
+  const std::vector<std::string> comps = {"comp", "incomp"};
+  for (int c = 0; c < 2; ++c) {
+    const std::string &comp = comps[c];
+    size_t offset = (c == 0) ? 0 : p.nTrl;
+
+    std::vector<double> rts, errs, slows;
+    rts.reserve(p.nTrl);
+    errs.reserve(p.nTrl / 10);
+    slows.reserve(p.nTrl / 100);
+
+    for (size_t i = 0; i < p.nTrl; ++i) {
+      int ch = all_choices[offset + i];
+      double val = all_rts[offset + i];
+      if (ch == 1) rts.push_back(val);
+      else if (ch == -1) errs.push_back(val);
+      else slows.push_back(val);
+    }
+
+    rsim["rts_" + comp] = rts;
+    rsim["errs_" + comp] = errs;
+    rsim["slows_" + comp] = slows;
+
+    rsum[comp] = calculate_summary(rts, errs, slows, p.nTrl);
+    rsum["delta_correct_" + comp] = calculate_percentile(p.vDelta, rts, p.tDelta);
+    rsum["delta_errors_" + comp] = calculate_percentile(p.vDelta, errs, p.tDelta);
+    rsum["caf_" + comp] = calculate_caf(rts, errs, p.nCAF);
+  }
+
+  calculate_delta(rsum);
+}
+
+// Full-data slow path (for individual trace plotting)
 void run_dmc_sim_ci(
     const Prms &p, std::map<std::string, std::vector<double>> &resSum,
     std::map<std::string, std::vector<double>> &sim,
@@ -71,24 +320,14 @@ void run_dmc_sim_ci(
   std::vector<double> activation_sum(p.tmax);
   std::vector<std::vector<double>> trl_mat(
       p.nTrlData,
-      std::vector<double>(p.tmax)); // needed if plotting individual trials
+      std::vector<double>(p.tmax));
 
   const std::vector<double> u_vec = time_dependent_drift(p, sign, sim["eq4"]);
-
-  // variable drift rate?
   const std::vector<double> dr = drift_rate(p, rng);
-
-  // variable starting point?
   const std::vector<double> sp = starting_point(p, rng);
 
-  // run simulation and store rts for correct/incorrect trials
-  if (p.fullData) {
-    run_simulation(p, activation_sum, trl_mat, u_vec, sp, dr, rts, errs, slows,
-                   rng);
-    trials[comp] = trl_mat;
-  } else {
-    run_simulation(p, u_vec, sp, dr, rts, errs, slows, rng);
-  }
+  run_simulation(p, activation_sum, trl_mat, u_vec, sp, dr, rts, errs, slows, rng);
+  trials[comp] = trl_mat;
 
   m.lock();
   sim["activation_" + comp] = activation_sum;
@@ -96,24 +335,11 @@ void run_dmc_sim_ci(
   sim["errs_" + comp] = errs;
   sim["slows_" + comp] = slows;
 
-  // results summary
   resSum[comp] = calculate_summary(rts, errs, slows, p.nTrl);
-  resSum["delta_correct_" + comp] =
-      calculate_percentile(p.vDelta, rts, p.tDelta);
-  resSum["delta_errors_" + comp] =
-      calculate_percentile(p.vDelta, errs, p.tDelta);
+  resSum["delta_correct_" + comp] = calculate_percentile(p.vDelta, rts, p.tDelta);
+  resSum["delta_errors_" + comp] = calculate_percentile(p.vDelta, errs, p.tDelta);
   resSum["caf_" + comp] = calculate_caf(rts, errs, p.nCAF);
   m.unlock();
-}
-
-std::vector<double>
-time_dependent_drift(const Prms &p, int sign,
-                     const std::vector<double> &automatic_activation) {
-  std::vector<double> tdd(p.tmax);
-  for (auto i = 0u; i < tdd.size(); i++)
-    tdd[i] = sign * automatic_activation[i] *
-             ((p.aaShape - 1) / (i + 1.0) - 1 / p.tau);
-  return tdd;
 }
 
 std::vector<double> drift_rate(const Prms &p, RNG &rng) {
@@ -123,8 +349,7 @@ std::vector<double> drift_rate(const Prms &p, RNG &rng) {
     for (auto &i : dr)
       i = bdDR(rng) * (p.drLimHigh - p.drLimLow) + p.drLimLow;
   } else if (p.drDist == 2) {
-    boost::random::uniform_real_distribution<double> unDR(p.drLimLow,
-                                                          p.drLimHigh);
+    boost::random::uniform_real_distribution<double> unDR(p.drLimLow, p.drLimHigh);
     for (auto &i : dr)
       i = unDR(rng);
   }
@@ -138,8 +363,7 @@ std::vector<double> starting_point(const Prms &p, RNG &rng) {
     for (auto &i : sp)
       i = (bdSP(rng) * (p.spLimHigh - p.spLimLow) + p.spLimLow) + p.spBias;
   } else if (p.spDist == 2) {
-    boost::random::uniform_real_distribution<double> unSP(p.spLimLow,
-                                                          p.spLimHigh);
+    boost::random::uniform_real_distribution<double> unSP(p.spLimLow, p.spLimHigh);
     for (auto &i : sp)
       i = unSP(rng) + p.spBias;
   }
@@ -149,15 +373,12 @@ std::vector<double> starting_point(const Prms &p, RNG &rng) {
 std::vector<double> residual_rt(const Prms &p, RNG &rng) {
   std::vector<double> residual_distribution(p.nTrl);
   if (p.resDist == 1) {
-    // Standard normal distribution with mean + sd (NB make sure no -ve)
     boost::random::normal_distribution<double> dist(p.resMean, p.resSD);
     for (auto &i : residual_distribution)
       i = std::max(0.0, dist(rng));
   } else if (p.resDist == 2) {
-    // Standard uniform distribution with mean + sd
     double range = std::max(0.01, sqrt((p.resSD * p.resSD / (1.0 / 12.0))) / 2);
-    boost::random::uniform_real_distribution<double> dist(p.resMean - range,
-                                                          p.resMean + range);
+    boost::random::uniform_real_distribution<double> dist(p.resMean - range, p.resMean + range);
     for (auto &i : residual_distribution)
       i = std::max(0.0, dist(rng));
   }
@@ -169,10 +390,7 @@ void run_simulation(const Prms &p, const std::vector<double> &u_vec,
                     const std::vector<double> &dr, std::vector<double> &rts,
                     std::vector<double> &errs, std::vector<double> &slows,
                     RNG rng) {
-
   boost::random::normal_distribution<double> snd(0.0, 1.0);
-
-  // residual RT distribution
   const std::vector<double> residual_distribution = residual_rt(p, rng);
   for (auto trl = 0u; trl < p.nTrl; trl++) {
     double activation_trial = sp[trl];
@@ -190,20 +408,6 @@ void run_simulation(const Prms &p, const std::vector<double> &u_vec,
       }
     }
   }
-
-  // if (p.spDist != 0) {
-  //     double meanSP = accumulate(sp.begin(), sp.end(), 0.0) / sp.size();
-  //     double sdSP = std::sqrt( std::inner_product(sp.begin(), sp.end(),
-  //     sp.begin(), 0.0) / sp.size() - meanSP * meanSP); std::cout << "Mean/SD
-  //     SP: " << meanSP << "/" << sdSP << std::endl << std::endl;
-  // }
-
-  // if (p.drDist != 0) {
-  //     double meanDR = accumulate(dr.begin(), dr.end(), 0.0) / dr.size();
-  //     double sdDR = std::sqrt( std::inner_product(dr.begin(), dr.end(),
-  //     dr.begin(), 0.0) / dr.size() - meanDR * meanDR); std::cout << "Mean/SD
-  //     DR: " << meanDR << "/" << sdDR << std::endl << std::endl;
-  // }
 }
 
 void run_simulation(const Prms &p, std::vector<double> &activation_sum,
@@ -213,12 +417,8 @@ void run_simulation(const Prms &p, std::vector<double> &activation_sum,
                     const std::vector<double> &dr, std::vector<double> &rts,
                     std::vector<double> &errs, std::vector<double> &slows,
                     RNG rng) {
-
   boost::random::normal_distribution<double> snd(0.0, 1.0);
-
-  // residual RT distribution
   const std::vector<double> residual_distribution = residual_rt(p, rng);
-
   for (auto trl = 0u; trl < p.nTrl; trl++) {
     bool criterion = false;
     double activation_trial = sp[trl];
@@ -240,120 +440,4 @@ void run_simulation(const Prms &p, std::vector<double> &activation_sum,
   }
   for (auto i = 0u; i < p.tmax; i++)
     activation_sum[i] /= static_cast<double>(p.nTrl);
-}
-
-std::vector<double> calculate_summary(const std::vector<double> &rts,
-                                      const std::vector<double> &errs,
-                                      const std::vector<double> &slows,
-                                      const unsigned long nTrl) {
-
-  // rtCor, sdRtCor, perErr, rtErr, sdRtErr
-  std::vector<double> res(6);
-  if (!rts.empty()) {
-    res[0] = accumulate(rts.begin(), rts.end(), 0.0) / rts.size();
-    res[1] =
-        std::sqrt(std::inner_product(rts.begin(), rts.end(), rts.begin(), 0.0) /
-                      rts.size() -
-                  res[0] * res[0]);
-  }
-  res[2] = (errs.size() / static_cast<double>(nTrl)) * 100;
-  if (!errs.empty()) {
-    res[3] = accumulate(errs.begin(), errs.end(), 0.0) / errs.size();
-    res[4] = std::sqrt(
-        std::inner_product(errs.begin(), errs.end(), errs.begin(), 0.0) /
-            errs.size() -
-        res[3] * res[3]);
-  }
-  res[5] = (slows.size() / static_cast<double>(nTrl)) * 100;
-
-  return res;
-}
-
-std::vector<double> calculate_percentile(const std::vector<double> &vDelta,
-                                         std::vector<double> &rts,
-                                         const int type) {
-
-  int nDelta = vDelta.size() - 2;
-  int nTrls = static_cast<int>(rts.size());
-  std::vector<double> res_p(nDelta, 0);
-  std::vector<int> pct_idx_int(nDelta);
-
-  if (nTrls >= nDelta) {
-    std::sort(rts.begin(), rts.end());
-    for (int i = 0; i < nDelta; i++) {
-      const double pct_idx = (vDelta[i + 1] / 100.0) * (rts.size() - 1);
-      pct_idx_int[i] = static_cast<int>(pct_idx);
-      const double pct_idx_dec = pct_idx - static_cast<double>(pct_idx_int[i]);
-      res_p[i] =
-          rts[pct_idx_int[i]] +
-          ((rts[pct_idx_int[i] + 1] - rts[pct_idx_int[i]]) * pct_idx_dec);
-    }
-  }
-  if (type == 1) {
-    return res_p;
-  }
-
-  std::vector<double> res_b(nDelta + 1, 0);
-  unsigned long idxStart = 0;
-  for (unsigned long i = 0; i < pct_idx_int.size() + 1; i++) {
-    const unsigned long idxEnd =
-        i < pct_idx_int.size() ? pct_idx_int[i] : rts.size();
-    for (unsigned long j = idxStart; j < idxEnd; j++) {
-      res_b[i] += rts[j];
-    }
-    res_b[i] /= (idxEnd - idxStart);
-    idxStart = idxEnd;
-  }
-  return res_b;
-}
-
-void calculate_delta(std::map<std::string, std::vector<double>> &resDelta) {
-  for (auto i = 0u; i < resDelta["delta_correct_comp"].size(); i++) {
-    resDelta["delta_correct_mean"].push_back(
-        (resDelta["delta_correct_comp"][i] +
-         resDelta["delta_correct_incomp"][i]) /
-        2);
-    resDelta["delta_correct_delta"].push_back(
-        resDelta["delta_correct_incomp"][i] -
-        resDelta["delta_correct_comp"][i]);
-    resDelta["delta_errors_mean"].push_back(
-        (resDelta["delta_errors_comp"][i] +
-         resDelta["delta_errors_incomp"][i]) /
-        2);
-    resDelta["delta_errors_delta"].push_back(
-        resDelta["delta_errors_incomp"][i] - resDelta["delta_errors_comp"][i]);
-  }
-}
-
-std::vector<double> calculate_caf(const std::vector<double> &rts,
-                                  const std::vector<double> &errs,
-                                  const int nCAF) {
-
-  std::vector<double> res(nCAF, 0);
-
-  if (rts.size() + errs.size() != 0) {
-
-    std::vector<std::pair<double, bool>> comb;
-    comb.reserve(rts.size() + errs.size());
-
-    for (double rt : rts)
-      comb.emplace_back(rt, false);
-    for (double err : errs)
-      comb.emplace_back(err, true);
-
-    std::sort(comb.begin(), comb.end());
-    std::vector<int> bins(comb.size());
-    for (auto i = 0u; i < comb.size(); i++)
-      bins[i] = static_cast<int>(nCAF * (i) / comb.size());
-
-    std::vector<long int> countErr(nCAF, 0);
-    std::vector<long int> countCor(nCAF, 0);
-    for (auto i = 0u; i < bins.size(); i++)
-      (comb[i].second == 0) ? countCor[bins[i]]++ : countErr[bins[i]]++;
-    for (auto i = 0u; i < countCor.size(); i++)
-      res[i] =
-          1 - (countErr[i] / static_cast<float>(countCor[i] + countErr[i]));
-  }
-
-  return res;
 }
