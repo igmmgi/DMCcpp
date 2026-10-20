@@ -108,30 +108,33 @@ std::vector<double> calculate_percentile(const std::vector<double> &vDelta,
 
 // Linear two-pointer CAF calculation (No 100k pair vector allocation)
 std::vector<double> calculate_caf(const std::vector<double> &rts,
-                                  const std::vector<double> &errs, int nCAF) {
+                                  const std::vector<double> &errs,
+                                  const int nCAF) {
+
   std::vector<double> res(nCAF, 0.0);
-  size_t total = rts.size() + errs.size();
-  if (total == 0) return res;
 
-  std::vector<long int> countErr(nCAF, 0);
-  std::vector<long int> countCor(nCAF, 0);
+  if (rts.size() + errs.size() != 0) {
 
-  size_t i_rt = 0, i_err = 0;
-  for (size_t k = 0; k < total; ++k) {
-    int bin = static_cast<int>(nCAF * k / total);
-    if (i_rt < rts.size() && (i_err >= errs.size() || rts[i_rt] <= errs[i_err])) {
-      countCor[bin]++;
-      i_rt++;
-    } else {
-      countErr[bin]++;
-      i_err++;
-    }
+    std::vector<std::pair<double, bool>> comb;
+    comb.reserve(rts.size() + errs.size());
+    for (double rt : rts)
+      comb.emplace_back(rt, false);
+    for (double err : errs)
+      comb.emplace_back(err, true);
+
+    std::sort(comb.begin(), comb.end());
+    std::vector<int> bins(comb.size());
+    for (auto i = 0u; i < comb.size(); i++)
+      bins[i] = int(nCAF * (i) / comb.size());
+
+    std::vector<long int> countErr(nCAF, 0);
+    std::vector<long int> countCor(nCAF, 0);
+    for (auto i = 0u; i < bins.size(); i++)
+      (comb[i].second == 0) ? countCor[bins[i]]++ : countErr[bins[i]]++;
+    for (auto i = 0u; i < countCor.size(); i++)
+      res[i] = 1.0 - (countErr[i] / float(countCor[i] + countErr[i]));
   }
 
-  for (int i = 0; i < nCAF; ++i) {
-    long int total_bin = countCor[i] + countErr[i];
-    res[i] = (total_bin > 0) ? (1.0 - (countErr[i] / static_cast<double>(total_bin))) : 1.0;
-  }
   return res;
 }
 
